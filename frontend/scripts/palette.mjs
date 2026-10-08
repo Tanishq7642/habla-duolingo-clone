@@ -12,6 +12,8 @@ import { writeFileSync } from "node:fs";
 export const palette = {
   // name: { shade: [light, dark] }
   surface: { DEFAULT: ["#FFFFFF", "#131F24"], raised: ["#FFFFFF", "#202F36"] },
+  // Duolingo's mid-grey used for navigation labels and secondary text ("wolf").
+  wolf: { DEFAULT: ["#777777", "#A8B8C1"] },
   ink: {
     50: ["#F7F7F7", "#1B2A31"], 100: ["#F0F0F0", "#22333B"], 200: ["#E5E5E5", "#37464F"],
     300: ["#CECECE", "#52656D"], 400: ["#AFAFAF", "#6F838D"], 500: ["#6B6B6B", "#9DB0BA"],
@@ -23,7 +25,7 @@ export const palette = {
     700: ["#4A8F00", "#4A8F00"], 800: ["#3B7300", "#93D333"],
   },
   ocean: {
-    50: ["#DDF4FF", "#11303F"], 100: ["#BCE9FF", "#163E52"], 400: ["#49C0F8", "#49C0F8"],
+    50: ["#DDF4FF", "#11303F"], 100: ["#BCE9FF", "#163E52"], 200: ["#84D8FF", "#1F6E94"], 400: ["#49C0F8", "#49C0F8"],
     500: ["#1CB0F6", "#1CB0F6"], 600: ["#1899D6", "#1899D6"], 700: ["#1482B8", "#1482B8"], 800: ["#0C6694", "#5CC8FA"],
   },
   sun: {

@@ -90,17 +90,17 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
     // sticky banner, so the next unit's banner pushes this one away. The phone offset clears the
     // sticky stats header; the background hides path nodes scrolling underneath.
     <div className="sticky top-[calc(3.5rem+2px)] z-10 -mx-1 bg-surface px-1 pb-4 pt-2 xl:top-0 xl:pt-6">
-      <header className={clsx("flex items-stretch justify-between rounded-2xl text-white", t.banner, t.shelf)}>
-        <div className="min-w-0 px-5 py-4">
+      <header className={clsx("flex items-center justify-between gap-4 rounded-2xl px-5 py-4 text-white", t.banner)}>
+        <div className="min-w-0">
           <p className="text-[0.8rem] font-black uppercase tracking-[0.12em] opacity-80">Unit {unit.position}</p>
           <h2 id={`unit-${unit.id}`} className="text-[1.45rem] font-black leading-tight">{unit.title}</h2>
           <p className="mt-0.5 font-semibold opacity-90">{unit.description}</p>
         </div>
-        <div className="flex shrink-0 items-center border-l-2 border-black/15 px-4">
+        <div className="shrink-0">
           <button
             type="button"
             onClick={() => setGuideOpen(true)}
-            className="flex items-center gap-2 rounded-2xl border-2 border-b-4 border-black/20 px-3 py-2.5 text-sm font-black uppercase tracking-wide transition hover:bg-white/10 active:translate-y-[2px] active:border-b-2"
+            className="flex items-center gap-2 rounded-2xl border-2 border-black/20 px-4 py-2.5 text-sm font-black uppercase tracking-wide transition hover:bg-white/10"
           >
             <GuidebookIcon className="h-5 w-5" />
             <span className="hidden sm:inline">Guidebook</span>

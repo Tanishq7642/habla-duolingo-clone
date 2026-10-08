@@ -26,7 +26,7 @@ export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 rounded-xl px-2" aria-label="Habla home">
       {/* Logotype: brand colour on purpose (WCAG exempts logos). */}
-      <span className="text-3xl font-black tracking-tight text-leaf-500">habla</span>
+      <span className="text-[2.1rem] font-black tracking-tight text-leaf-500">habla</span>
     </Link>
   );
 }
@@ -35,7 +35,7 @@ export function Logo() {
 export function Sidebar() {
   const isActive = useIsActive();
   return (
-    <aside className="sticky top-0 hidden h-[100dvh] w-64 shrink-0 flex-col gap-6 border-r-2 border-ink-100 px-4 py-7 lg:flex">
+    <aside className="sticky top-0 hidden h-[100dvh] w-[17.75rem] shrink-0 flex-col gap-8 border-r-2 border-ink-200 px-4 pt-8 lg:flex">
       <Logo />
       <nav aria-label="Main" className="flex flex-col gap-2">
         {NAV.map((item) => {
@@ -46,11 +46,12 @@ export function Sidebar() {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={clsx(
-                "flex items-center gap-4 rounded-2xl border-2 px-4 py-3 text-sm font-extrabold uppercase tracking-wide transition",
-                active ? "border-ocean-400 bg-ocean-50 text-ocean-800" : "border-transparent text-ink-500 hover:bg-ink-50",
+                "flex min-h-[3.6rem] items-center gap-5 rounded-xl border-2 px-4 py-2 text-[1.05rem] font-extrabold uppercase tracking-[0.05em] transition",
+                // Duolingo: active = bright blue label on light blue with a blue outline; others are grey
+                active ? "border-ocean-200 bg-ocean-50 text-ocean-500" : "border-transparent text-wolf hover:bg-ink-50",
               )}
             >
-              <item.Icon size={32} className="shrink-0" />
+              <item.Icon size={36} className="shrink-0" />
               {item.label}
             </Link>
           );
