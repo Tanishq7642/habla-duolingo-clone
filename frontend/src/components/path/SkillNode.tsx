@@ -105,7 +105,7 @@ function SkillPopover({ skill, theme }: { skill: Skill; theme: string }) {
             title={`Lesson ${l.position}: ${l.title}`}
             className={clsx(
               "h-2.5 flex-1 rounded-full",
-              l.status === "completed" ? "bg-surface" : "bg-white/35",
+              l.status === "completed" ? "bg-white" : "bg-white/35", // white in both themes, like Duolingo
             )}
           >
             <span className="sr-only">Lesson {l.position} {l.title}: {l.status}</span>
@@ -127,7 +127,8 @@ function SkillPopover({ skill, theme }: { skill: Skill; theme: string }) {
               href={`/lesson/${skill.next_lesson_id}`}
               variant="ghost"
               block
-              className={clsx("mt-4 !border-white", completed ? "!text-sun-800" : t.text)}
+              // Always a white button on the coloured popover (not theme-dependent), text in the unit colour.
+              className={clsx("mt-4 !border-white !bg-white hover:!bg-[#F2F2F2]", completed ? "!text-sun-600" : t.text)}
             >
               {completed ? (skill.mastery >= skill.mastery_cap ? "Review" : "Level up") : skill.status === "in_progress" ? "Continue" : "Start"}
             </ButtonLink>

@@ -89,7 +89,7 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
     // Pinned while this unit's skills scroll by (like Duolingo). Each <section> bounds its own
     // sticky banner, so the next unit's banner pushes this one away. The phone offset clears the
     // sticky stats header; the background hides path nodes scrolling underneath.
-    <div className="sticky top-[calc(3.5rem+2px)] z-10 -mx-1 bg-surface px-1 pb-4 pt-2 xl:top-0 xl:pt-6">
+    <div className="sticky top-[calc(3.5rem+2px)] z-30 -mx-1 bg-surface px-1 pt-2 xl:top-0 xl:pt-6">
       <header className={clsx("flex items-center justify-between gap-4 rounded-2xl px-5 py-4 text-white", t.banner)}>
         <div className="min-w-0">
           <p className="text-[0.8rem] font-black uppercase tracking-[0.12em] opacity-80">Unit {unit.position}</p>
