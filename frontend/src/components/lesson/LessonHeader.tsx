@@ -53,7 +53,7 @@ function HeartCounter({ hearts }: { hearts: number }) {
   return (
     <div className="relative flex items-center gap-1.5" aria-label={`${hearts} hearts left`} role="status">
       <HeartIcon className={clsx("h-7 w-7", hearts === 0 ? "text-ink-200" : "text-coral-500")} />
-      <span className={clsx("text-lg font-black tabular-nums", hearts === 0 ? "text-ink-500" : "text-coral-700")}>{hearts}</span>
+      <span className={clsx("text-lg font-black tabular-nums", hearts === 0 ? "text-ink-500" : "text-coral-800")}>{hearts}</span>
       {lost > 0 && (
         <HeartIcon key={lost} className="pointer-events-none absolute left-0 top-0 h-7 w-7 animate-heart-loss text-coral-500" />
       )}

@@ -12,7 +12,7 @@ export const useToast = () => useContext(ToastContext);
 
 const tones: Record<Tone, string> = {
   success: "border-leaf-200 bg-leaf-50 text-leaf-800",
-  error: "border-coral-100 bg-coral-50 text-coral-700",
+  error: "border-coral-100 bg-coral-50 text-coral-800",
   info: "border-ocean-100 bg-ocean-50 text-ocean-800",
 };
 

@@ -38,7 +38,7 @@ export function ErrorState({ error, onRetry: retry, retrying, compact }: Props) 
   if (compact) {
     return (
       <div role="alert" className="rounded-2xl border-2 border-coral-100 bg-coral-50 p-4 text-sm">
-        <p className="font-extrabold text-coral-700">{title}</p>
+        <p className="font-extrabold text-coral-800">{title}</p>
         <p className="mt-1 text-ink-700">{body}</p>
         {onRetry && (
           <Button size="sm" variant="ghost" className="mt-3" onClick={onRetry} loading={retrying}>

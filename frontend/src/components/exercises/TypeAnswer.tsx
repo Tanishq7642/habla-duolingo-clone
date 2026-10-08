@@ -50,9 +50,9 @@ export function TypeAnswer({ exercise, value, onChange, locked, result }: Exerci
           "w-full rounded-2xl border-2 px-5 py-4 text-xl font-bold text-ink-900 outline-none transition",
           "placeholder:font-semibold placeholder:text-ink-300",
           // Exactly one colour set applies, so utilities never fight over specificity.
-          !result && "border-ink-200 bg-ink-50 focus:border-ocean-400 focus:bg-white",
+          !result && "border-ink-200 bg-ink-50 focus:border-ocean-400 focus:bg-surface",
           result?.correct && "border-leaf-400 bg-leaf-50 text-leaf-800",
-          result && !result.correct && "animate-shake border-coral-400 bg-coral-50 text-coral-700",
+          result && !result.correct && "animate-shake border-coral-400 bg-coral-50 text-coral-800",
         )}
       />
       {answer_language === "es" && !locked && (
@@ -63,7 +63,7 @@ export function TypeAnswer({ exercise, value, onChange, locked, result }: Exerci
               type="button"
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => insert(ch)}
-              className="h-10 w-10 rounded-xl border-2 border-b-4 border-ink-200 bg-white font-bold text-ink-700 active:translate-y-[2px] active:border-b-2"
+              className="h-10 w-10 rounded-xl border-2 border-b-4 border-ink-200 bg-surface font-bold text-ink-700 active:translate-y-[2px] active:border-b-2"
               aria-label={`Insert ${ch}`}
             >
               {ch}

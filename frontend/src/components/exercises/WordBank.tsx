@@ -25,7 +25,7 @@ export function WordBank({ exercise, value, onChange, locked, result }: Exercise
         aria-live="polite"
         className={clsx(
           "flex min-h-[7.5rem] flex-wrap content-start gap-2 border-y-2 py-3 transition-colors",
-          "bg-[repeating-linear-gradient(transparent,transparent_3.6rem,#DCE3EB_3.6rem,#DCE3EB_3.75rem)]",
+          "bg-[repeating-linear-gradient(transparent,transparent_3.6rem,rgb(var(--ink-200))_3.6rem,rgb(var(--ink-200))_3.75rem)]",
           answerState,
           result && !result.correct && "animate-shake",
         )}

@@ -15,8 +15,8 @@ export function CrownBadge({ level, max, className }: { level: number; max: numb
       <svg viewBox="0 0 32 28" className="absolute inset-0 h-full w-full" aria-hidden>
         <path
           d="M3 9 L9 15 L16 4 L23 15 L29 9 L26 25 H6 Z"
-          fill={earned ? "#FFC800" : "#E5E5E5"}
-          stroke={earned ? "#E5A800" : "#CECECE"}
+          fill={earned ? "#FFC800" : "rgb(var(--ink-200))"}
+          stroke={earned ? "#E5A800" : "rgb(var(--ink-300))"}
           strokeWidth="2.5"
           strokeLinejoin="round"
         />

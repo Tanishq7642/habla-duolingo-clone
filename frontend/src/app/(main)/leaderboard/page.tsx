@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
             onClick={() => setPeriod(p.id)}
             className={clsx(
               "rounded-xl px-5 py-2 text-sm font-extrabold uppercase tracking-wide transition",
-              period === p.id ? "bg-white text-ocean-800 shadow-sm" : "text-ink-500 hover:text-ink-700",
+              period === p.id ? "bg-surface text-ocean-800 shadow-sm" : "text-ink-500 hover:text-ink-700",
             )}
           >
             {p.label}

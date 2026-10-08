@@ -9,7 +9,7 @@ export function ProfileHeader({ learner }: { learner: Learner }) {
   const { level, xp_into_level, xp_for_next_level } = learner.level;
   return (
     <header className="relative flex flex-col items-center gap-5 rounded-3xl bg-gradient-to-br from-leaf-50 to-ocean-50 p-6 text-center sm:flex-row sm:text-left">
-      <Link href="/settings" aria-label="Settings" className="absolute right-4 top-4 rounded-xl p-2 text-2xl hover:bg-white/60">
+      <Link href="/settings" aria-label="Settings" className="absolute right-4 top-4 rounded-xl p-2 text-2xl hover:bg-surface/60">
         ⚙️
       </Link>
       <div className="relative">

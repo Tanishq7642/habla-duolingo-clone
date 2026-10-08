@@ -1,10 +1,11 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import { ToastProvider } from "@/components/ui/Toast";
 import { ApiError } from "@/lib/api";
+import { applyTheme, getThemePreference } from "@/lib/theme";
 
 function makeClient() {
   return new QueryClient({
@@ -25,8 +26,20 @@ function makeClient() {
   });
 }
 
+/** With the "system" preference, follow OS light/dark changes live. */
+function useSystemThemeSync() {
+  useEffect(() => {
+    const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+    if (!media) return;
+    const onChange = () => getThemePreference() === "system" && applyTheme("system");
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+}
+
 export function Providers({ children }: { children: ReactNode }) {
   const [client] = useState(makeClient);
+  useSystemThemeSync();
   return (
     <QueryClientProvider client={client}>
       <ToastProvider>{children}</ToastProvider>

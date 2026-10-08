@@ -15,7 +15,7 @@ export function QuitDialog({ open, onStay, onQuit }: { open: boolean; onStay: ()
         <Button block onClick={onStay}>
           Keep learning
         </Button>
-        <Button variant="plain" block className="!text-coral-700 hover:!bg-coral-50" onClick={onQuit}>
+        <Button variant="plain" block className="!text-coral-800 hover:!bg-coral-50" onClick={onQuit}>
           End session
         </Button>
       </div>

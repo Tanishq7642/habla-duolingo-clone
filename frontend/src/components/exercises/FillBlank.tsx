@@ -15,7 +15,7 @@ export function FillBlank({ exercise, value, onChange, locked, result }: Exercis
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="rounded-3xl border-2 border-ink-200 bg-white p-5 sm:p-6">
+      <div className="rounded-3xl border-2 border-ink-200 bg-surface p-5 sm:p-6">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-3 text-2xl font-extrabold text-ink-900">
           {before && <span>{before}</span>}
           <button
@@ -28,7 +28,7 @@ export function FillBlank({ exercise, value, onChange, locked, result }: Exercis
               blankState === "empty" && "border-ink-300 bg-ink-50 text-transparent",
               blankState === "filled" && "border-ocean-500 bg-ocean-50 text-ocean-800 animate-pop",
               blankState === "correct" && "border-leaf-500 bg-leaf-50 text-leaf-800",
-              blankState === "wrong" && "border-coral-500 bg-coral-50 text-coral-700 animate-shake",
+              blankState === "wrong" && "border-coral-500 bg-coral-50 text-coral-800 animate-shake",
             )}
           >
             {chosen?.text ?? "____"}

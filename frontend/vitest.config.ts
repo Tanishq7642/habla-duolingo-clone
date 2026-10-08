@@ -5,5 +5,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
-  test: { environment: "jsdom", globals: true, setupFiles: ["./src/test/setup.ts"] },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./src/test/setup.ts"],
+    include: ["src/**/*.test.{ts,tsx}"], // e2e/ belongs to Playwright
+  },
 });

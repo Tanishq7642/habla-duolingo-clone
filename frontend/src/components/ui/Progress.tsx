@@ -47,7 +47,7 @@ interface RingProps {
 }
 
 /** SVG progress ring drawn around skill nodes. */
-export function ProgressRing({ value, size, stroke = 8, color, track = "#E5EAF0", children, className }: RingProps) {
+export function ProgressRing({ value, size, stroke = 8, color, track = "rgb(var(--ink-200))", children, className }: RingProps) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const offset = c * (1 - Math.min(1, Math.max(0, value)));

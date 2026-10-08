@@ -4,17 +4,17 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { DemoLearnerCard } from "./DemoLearnerCard";
+import { LeaderboardIcon, LearnIcon, MoreIcon, ProfileIcon, QuestsIcon, ShopIcon } from "./NavIcons";
 
 // Same sections as Duolingo's web sidebar. `mobile: false` items live elsewhere on phones
 // (Settings is reachable from the Profile header) to keep the tab bar at 5 targets.
 const NAV = [
-  { href: "/", label: "Learn", icon: "🏠", mobile: true },
-  { href: "/leaderboard", label: "Leaderboards", icon: "🏆", mobile: true },
-  { href: "/quests", label: "Quests", icon: "🎯", mobile: true },
-  { href: "/shop", label: "Shop", icon: "🛍️", mobile: true },
-  { href: "/profile", label: "Profile", icon: "🙂", mobile: true },
-  { href: "/settings", label: "More", icon: "⚙️", mobile: false },
+  { href: "/", label: "Learn", Icon: LearnIcon, mobile: true },
+  { href: "/leaderboard", label: "Leaderboards", Icon: LeaderboardIcon, mobile: true },
+  { href: "/quests", label: "Quests", Icon: QuestsIcon, mobile: true },
+  { href: "/shop", label: "Shop", Icon: ShopIcon, mobile: true },
+  { href: "/profile", label: "Profile", Icon: ProfileIcon, mobile: true },
+  { href: "/settings", label: "More", Icon: MoreIcon, mobile: false },
 ] as const;
 
 function useIsActive() {
@@ -50,13 +50,12 @@ export function Sidebar() {
                 active ? "border-ocean-400 bg-ocean-50 text-ocean-800" : "border-transparent text-ink-500 hover:bg-ink-50",
               )}
             >
-              <span className="text-2xl" aria-hidden>{item.icon}</span>
+              <item.Icon size={32} className="shrink-0" />
               {item.label}
             </Link>
           );
         })}
       </nav>
-      <DemoLearnerCard />
     </aside>
   );
 }
@@ -67,7 +66,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-x-0 bottom-0 z-30 flex border-t-2 border-ink-100 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 flex border-t-2 border-ink-100 bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
       {NAV.filter((item) => item.mobile).map((item) => {
         const active = isActive(item.href);
@@ -80,12 +79,12 @@ export function MobileNav() {
           >
             <span
               className={clsx(
-                "flex h-10 w-12 items-center justify-center rounded-xl border-2 text-2xl transition",
+                "flex h-10 w-12 items-center justify-center rounded-xl border-2 transition",
                 active ? "border-ocean-400 bg-ocean-50" : "border-transparent",
               )}
               aria-hidden
             >
-              {item.icon}
+              <item.Icon size={28} />
             </span>
             <span className={clsx("max-w-full truncate text-[10px] font-extrabold", active ? "text-ocean-800" : "text-ink-500")}>{item.label}</span>
           </Link>

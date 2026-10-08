@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito } from "next/font/google";
 
+import "./theme.css";
 import "./globals.css";
+import { themeBootScript } from "@/lib/theme";
+
 import { Providers } from "./providers";
 
 const nunito = Nunito({ subsets: ["latin", "latin-ext"], variable: "--font-nunito", display: "swap" });
@@ -16,7 +19,11 @@ export const viewport: Viewport = { themeColor: "#58CC02", width: "device-width"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={nunito.variable}>
+    // suppressHydrationWarning: the boot script may add `dark` before React hydrates.
+    <html lang="en" className={nunito.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body>
         <Providers>{children}</Providers>
       </body>

@@ -10,7 +10,7 @@ const variants: Record<Variant, string> = {
   secondary: "bg-ocean-500 text-white border-ocean-700 hover:bg-ocean-400",
   danger: "bg-coral-500 text-white border-coral-700 hover:bg-coral-400",
   sun: "bg-sun-500 text-white border-sun-600 hover:bg-sun-400",
-  ghost: "bg-white text-ink-700 border-ink-200 hover:bg-ink-50",
+  ghost: "bg-surface text-ink-700 border-ink-200 hover:bg-ink-50",
   plain: "bg-transparent text-ocean-800 border-transparent hover:bg-ocean-50 !border-b-0",
 };
 

@@ -36,7 +36,7 @@ export function Modal({ open, onClose, title, children, className, hideTitle }: 
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="presentation">
-      <div className="absolute inset-0 animate-fade-in bg-ink-900/50 backdrop-blur-[2px]" onClick={onClose} />
+      <div className="absolute inset-0 animate-fade-in bg-black/60 backdrop-blur-[2px]" onClick={onClose} />
       <div
         ref={panel}
         role="dialog"
@@ -44,7 +44,7 @@ export function Modal({ open, onClose, title, children, className, hideTitle }: 
         aria-labelledby={titleId}
         tabIndex={-1}
         className={clsx(
-          "relative z-10 w-full max-w-md animate-pop rounded-t-4xl bg-white p-6 shadow-2xl outline-none sm:rounded-4xl sm:p-8",
+          "relative z-10 w-full max-w-md animate-pop rounded-t-4xl bg-surface-raised p-6 shadow-2xl outline-none sm:rounded-4xl sm:p-8",
           className,
         )}
       >

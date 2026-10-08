@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
+import { AppearancePicker } from "@/components/settings/AppearancePicker";
 import { DemoTools } from "@/components/settings/DemoTools";
 import { Button } from "@/components/ui/Button";
 import { ComingSoon } from "@/components/ui/ComingSoon";
@@ -51,6 +52,8 @@ export default function SettingsPage() {
     <PageShell>
       <h1 className="text-3xl font-black">Settings</h1>
 
+      <AppearancePicker />
+
       <section className="mt-8" aria-labelledby="goal-title">
         <h2 id="goal-title" className="text-lg font-black">Daily goal</h2>
         <div role="radiogroup" aria-labelledby="goal-title" className="mt-3 grid grid-cols-2 gap-3">
@@ -79,7 +82,7 @@ export default function SettingsPage() {
           value={name}
           maxLength={40}
           onChange={(e) => setName(e.target.value)}
-          className="mt-3 w-full rounded-2xl border-2 border-ink-200 bg-ink-50 px-4 py-3 font-bold outline-none focus:border-ocean-400 focus:bg-white"
+          className="mt-3 w-full rounded-2xl border-2 border-ink-200 bg-ink-50 px-4 py-3 font-bold outline-none focus:border-ocean-400 focus:bg-surface"
         />
       </section>
 
@@ -104,7 +107,7 @@ export default function SettingsPage() {
       </section>
 
       {update.error && (
-        <p role="alert" className="mt-6 font-bold text-coral-700">
+        <p role="alert" className="mt-6 font-bold text-coral-800">
           {update.error instanceof ApiError ? update.error.message : "Couldn't save settings."}
         </p>
       )}

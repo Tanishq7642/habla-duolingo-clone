@@ -103,7 +103,7 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
         </section>
       </main>
 
-      <footer className="sticky bottom-0 border-t-2 border-ink-100 bg-white">
+      <footer className="sticky bottom-0 border-t-2 border-ink-100 bg-surface">
         <div className="mx-auto flex w-full max-w-xl flex-col gap-3 px-5 py-4 sm:flex-row">
           {c.mistakes > 0 && (
             <Button variant="ghost" block onClick={() => setReviewing(true)}>
@@ -131,7 +131,7 @@ function StatTile({ label, tone, icon, children }: { label: string; tone: keyof 
   return (
     <div className={clsx("animate-pop overflow-hidden rounded-2xl border-2", tileTones[tone])}>
       <p data-brand-surface className="py-1 text-[11px] font-black uppercase tracking-wider text-white">{label}</p>
-      <p className="flex items-center justify-center gap-1.5 rounded-xl bg-white py-3 text-xl font-black text-ink-900">
+      <p className="flex items-center justify-center gap-1.5 rounded-xl bg-surface py-3 text-xl font-black text-ink-900">
         <span aria-hidden>{icon}</span>
         {children}
       </p>

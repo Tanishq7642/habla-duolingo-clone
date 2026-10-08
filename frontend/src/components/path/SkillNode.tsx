@@ -40,7 +40,7 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
   return (
     <div ref={ref} className="relative flex flex-col items-center" style={{ transform: `translateX(${offset}px)` }}>
       {isCurrent && !open && (
-        <span className="absolute -top-11 z-10 animate-float rounded-xl border-2 border-ink-200 bg-white px-3 py-1.5 text-sm font-black uppercase tracking-wide text-leaf-800 shadow-sm after:absolute after:-bottom-[7px] after:left-1/2 after:h-3 after:w-3 after:-translate-x-1/2 after:rotate-45 after:border-b-2 after:border-r-2 after:border-ink-200 after:bg-white">
+        <span className="absolute -top-11 z-10 animate-float rounded-xl border-2 border-ink-200 bg-surface px-3 py-1.5 text-sm font-black uppercase tracking-wide text-leaf-800 shadow-sm after:absolute after:-bottom-[7px] after:left-1/2 after:h-3 after:w-3 after:-translate-x-1/2 after:rotate-45 after:border-b-2 after:border-r-2 after:border-ink-200 after:bg-surface">
           {skill.status === "in_progress" ? "Continue" : "Start"}
         </span>
       )}
@@ -105,7 +105,7 @@ function SkillPopover({ skill, theme }: { skill: Skill; theme: string }) {
             title={`Lesson ${l.position}: ${l.title}`}
             className={clsx(
               "h-2.5 flex-1 rounded-full",
-              l.status === "completed" ? "bg-white" : "bg-white/35",
+              l.status === "completed" ? "bg-surface" : "bg-white/35",
             )}
           >
             <span className="sr-only">Lesson {l.position} {l.title}: {l.status}</span>

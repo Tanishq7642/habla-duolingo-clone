@@ -74,7 +74,7 @@ export function TopStats({ className }: { className?: string }) {
         trigger={
           <>
             <HeartIcon className={clsx("h-6 w-6", me.hearts ? "text-coral-500" : "text-ink-200")} />
-            <span className={me.hearts ? "text-coral-700" : "text-ink-500"}>{me.hearts}</span>
+            <span className={me.hearts ? "text-coral-800" : "text-ink-500"}>{me.hearts}</span>
           </>
         }
       >
@@ -155,7 +155,7 @@ function StatPopover({ label, trigger, children }: { label: string; trigger: Rea
         <div
           role="dialog"
           aria-label={label}
-          className="absolute right-0 top-full z-40 mt-2 w-72 animate-pop max-sm:fixed max-sm:inset-x-4 max-sm:top-16 max-sm:w-auto rounded-3xl border-2 border-ink-100 bg-white p-5 shadow-xl"
+          className="absolute right-0 top-full z-40 mt-2 w-72 animate-pop max-sm:fixed max-sm:inset-x-4 max-sm:top-16 max-sm:w-auto rounded-3xl border-2 border-ink-100 bg-surface-raised p-5 shadow-xl"
         >
           {children}
         </div>
