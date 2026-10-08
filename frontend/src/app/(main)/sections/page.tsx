@@ -52,8 +52,8 @@ function UnitCard({ unit }: { unit: UnitNode }) {
   return (
     <li className={clsx("flex items-center gap-4 rounded-2xl p-5 text-white", locked ? "bg-ink-300" : t.banner)}>
       <div className="min-w-0 flex-1">
-        <p className="text-[0.8rem] font-black uppercase tracking-[0.12em] opacity-80">Unit {unit.position}</p>
-        <h2 className="text-[1.45rem] font-black leading-tight">{unit.title}</h2>
+        <p className="text-[1.05rem] font-extrabold uppercase tracking-[0.03em] text-white/80">Unit {unit.position}</p>
+        <h2 className="mt-0.5 text-[1.55rem] font-black leading-tight">{unit.title}</h2>
         <p className="mt-0.5 font-semibold opacity-90">{unit.description}</p>
         <div className="mt-3 flex items-center gap-3">
           <div className="h-3 flex-1 overflow-hidden rounded-full bg-black/20" role="progressbar" aria-label={`${unit.title} progress`}

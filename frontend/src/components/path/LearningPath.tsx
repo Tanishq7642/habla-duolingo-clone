@@ -95,16 +95,16 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
     <div className="sticky top-[calc(3.5rem+2px)] z-30 -mx-1 bg-surface px-1 pt-2 xl:top-0 xl:pt-6">
       <header className={clsx("flex items-center justify-between gap-4 rounded-2xl px-5 py-4 text-white", t.banner)}>
         <div className="min-w-0">
-          <p className="flex items-center gap-2 text-[0.8rem] font-black uppercase tracking-[0.12em] opacity-80">
+          <p className="flex items-center gap-1.5 text-[1.05rem] font-extrabold uppercase tracking-[0.03em] text-white/80">
             {/* Like Duolingo's "← SECTION 1, UNIT 1": back to the overview of all units */}
             <Link href="/sections" aria-label="All units" className="-ml-1 rounded-lg p-0.5 transition hover:bg-white/15">
-              <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+              <svg viewBox="0 0 24 24" className="h-[1.15rem] w-[1.15rem]" aria-hidden>
                 <path d="M19 12H5M11.5 5.5 5 12l6.5 6.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
             Unit {unit.position}
           </p>
-          <h2 id={`unit-${unit.id}`} className="text-[1.45rem] font-black leading-tight">{unit.title}</h2>
+          <h2 id={`unit-${unit.id}`} className="mt-0.5 text-[1.55rem] font-black leading-tight">{unit.title}</h2>
           <p className="mt-0.5 font-semibold opacity-90">{unit.description}</p>
         </div>
         <div className="shrink-0">
