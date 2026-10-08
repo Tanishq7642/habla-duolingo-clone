@@ -20,7 +20,7 @@ Prerequisites: **Python 3.11+** and **Node 20+**.
 # 1. Backend
 cd backend
 python -m venv .venv && source .venv/Scripts/activate   # macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt                   # runtime + test tools (prod uses requirements.txt)
 python -m app.seed.seed                               # creates habla.db with the demo course + learner
 uvicorn app.main:app --port 8000                      # http://127.0.0.1:8000/docs for Swagger
 ```
@@ -323,10 +323,30 @@ returns. Unit themes and flags are data-keyed.
 
 ## Deployment
 
+### Option A (recommended, free): Hugging Face Spaces, one container
+
+The root [`Dockerfile`](Dockerfile) builds **frontend and backend into one image**: Next.js serves
+the public port 7860 and proxies `/api` to FastAPI on `127.0.0.1:8000` inside the container
+([`deploy/start.sh`](deploy/start.sh)). One free host, one URL, no card, and it only sleeps after
+~48 h without visitors.
+
+```bash
+pip install huggingface_hub
+hf auth login                          # paste a *write* token from huggingface.co/settings/tokens
+python deploy/push_to_hf.py            # creates a private Docker Space and uploads the repo
+python deploy/push_to_hf.py --public   # when you're ready to share the link
+```
+
+The build takes ~5 minutes; the app is then at `https://<user>-habla-duolingo-clone.hf.space`.
+The same image runs anywhere: `docker build -t habla . && docker run -p 7860:7860 habla`.
+
+### Option B: Render (API) + Vercel (web)
+
 **Backend → Render** (or Railway via `backend/Procfile`). The repo's [`render.yaml`](render.yaml) is a
-Blueprint: New → Blueprint → pick the repo. It installs `backend/requirements.txt` and runs
-`uvicorn app.main:app --host 0.0.0.0 --port $PORT`. On first boot with an empty database the API
-**seeds itself** (`HABLA_AUTO_SEED=true`), so no manual step is needed. Health check: `/api/health`.
+Blueprint: New → Blueprint → pick the repo. Choose the *Free* instance type. If the Blueprint flow asks for a
+card, create a plain *Web Service* instead (root `backend`, start
+`uvicorn app.main:app --host 0.0.0.0 --port $PORT`). On first boot with an empty database the API
+**seeds itself** (`HABLA_AUTO_SEED=true`). Health check: `/api/health`.
 
 **Frontend → Vercel.** Import the repo with root directory **`frontend`** and set
 `HABLA_API_ORIGIN=https://<your-render-service>.onrender.com` *before* the first build (Next bakes
