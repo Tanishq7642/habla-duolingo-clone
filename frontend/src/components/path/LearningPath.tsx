@@ -111,9 +111,9 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
           <button
             type="button"
             onClick={() => setGuideOpen(true)}
-            className="flex items-center gap-2 rounded-2xl border-2 border-black/20 px-4 py-2.5 text-sm font-black uppercase tracking-wide transition hover:bg-white/10"
+            className="flex items-center gap-2.5 rounded-2xl border-2 border-b-4 border-black/20 px-4 py-2.5 text-[0.95rem] font-black uppercase tracking-wide transition hover:bg-white/10 active:translate-y-[2px] active:border-b-2"
           >
-            <GuidebookIcon className="h-5 w-5" />
+            <GuidebookIcon className="h-6 w-6" />
             <span className="hidden sm:inline">Guidebook</span>
             <span className="sr-only sm:hidden">Guidebook</span>
           </button>

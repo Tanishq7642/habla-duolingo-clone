@@ -27,7 +27,7 @@ export function PracticeCard() {
         </p>
       </div>
       {data.available && (
-        <ButtonLink href="/practice" variant="ghost" block className="mt-5 !text-ocean-500">
+        <ButtonLink href="/practice" variant="secondary" block className="mt-5">
           {weak > 0 ? "Practise weak areas" : "Practise"}
         </ButtonLink>
       )}

@@ -5,11 +5,13 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 type Variant = "primary" | "secondary" | "danger" | "sun" | "ghost" | "plain";
 type Size = "sm" | "md" | "lg";
 
+// Filled variants: like Duolingo, the darker shade is only the bottom "3D" lip; the sides are
+// transparent so the fill colour runs to the edge.
 const variants: Record<Variant, string> = {
-  primary: "bg-leaf-500 text-white border-leaf-700 hover:bg-leaf-400",
-  secondary: "bg-ocean-500 text-white border-ocean-700 hover:bg-ocean-400",
-  danger: "bg-coral-500 text-white border-coral-700 hover:bg-coral-400",
-  sun: "bg-sun-500 text-white border-sun-600 hover:bg-sun-400",
+  primary: "bg-leaf-500 text-white border-transparent border-b-leaf-700 hover:bg-leaf-400",
+  secondary: "bg-ocean-500 text-white border-transparent border-b-ocean-700 hover:bg-ocean-400",
+  danger: "bg-coral-500 text-white border-transparent border-b-coral-700 hover:bg-coral-400",
+  sun: "bg-sun-500 text-white border-transparent border-b-sun-600 hover:bg-sun-400",
   ghost: "bg-surface text-ink-700 border-ink-200 hover:bg-ink-50",
   plain: "bg-transparent text-ocean-800 border-transparent hover:bg-ocean-50 !border-b-0",
 };

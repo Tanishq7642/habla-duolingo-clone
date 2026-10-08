@@ -54,9 +54,34 @@
   transform: scaleY(0);
   animation: pip-blink 4.6s infinite;
 }
+/* 3D head turn: --lx/--ly (-1..1) come from the pointer. Layers move by
+   different amounts (parallax): pupils most, face next, leaves the opposite
+   way, and the whole body leans a little. */
 .pip-pupils {
-  translate: var(--look-x, 0px) var(--look-y, 0px);
+  translate: calc(var(--lx, 0) * 3.6px) calc(var(--ly, 0) * 3.2px);
   transition: translate 0.18s ease-out;
+}
+.pip-face {
+  translate: calc(var(--lx, 0) * 3.5px) calc(var(--ly, 0) * 2.5px);
+  transition: translate 0.25s ease-out;
+}
+.pip-leaves-depth {
+  translate: calc(var(--lx, 0) * -1.6px) calc(var(--ly, 0) * -1px);
+  transition: translate 0.3s ease-out;
+}
+.pip-shine {
+  translate: calc(var(--lx, 0) * -2.5px) calc(var(--ly, 0) * -1.5px);
+  transition: translate 0.3s ease-out;
+}
+.pip-interactive .pip-root {
+  transform-origin: 50% 100%;
+  rotate: calc(var(--lx, 0) * 4deg);
+  transition: rotate 0.35s ease-out;
+}
+/* Pips that aren't following a pointer glance around now and then. */
+.pip-idle .pip-face,
+.pip-idle .pip-pupils {
+  animation: pip-look 9s ease-in-out infinite;
 }
 .pip-arm-l {
   transform-origin: 100% 30%;
@@ -100,6 +125,12 @@
   animation: pip-shadow-hop 0.65s cubic-bezier(0.3, 0, 0.3, 1);
 }
 
+@keyframes pip-look {
+  0%, 30%, 100% { translate: 0 0; }
+  38%, 52% { translate: 3px -1px; }
+  60%, 74% { translate: -3px 0.5px; }
+  82% { translate: 0 0; }
+}
 @keyframes pip-breathe {
   0%, 100% { transform: scale(1, 1); }
   50% { transform: scale(1.025, 0.97); }
