@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { useEffect, useRef } from "react";
 
 import { ButtonLink } from "@/components/ui/Button";
+import { CrownBadge } from "@/components/ui/Crown";
 import { ProgressRing } from "@/components/ui/Progress";
 import type { SkillNode as Skill } from "@/lib/types";
 
@@ -47,7 +48,7 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
         value={locked ? 0 : ratio}
         size={104}
         stroke={8}
-        color={completed ? "#FFB020" : t.ring}
+        color={completed ? "#FFC800" : t.ring}
         className={clsx(isCurrent && "rounded-full animate-pulse-ring")}
       >
         <button
@@ -70,14 +71,9 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
             </span>
           )}
         </button>
+        {!locked && <CrownBadge level={skill.mastery} max={skill.mastery_cap} className="absolute -bottom-1 -right-1" />}
       </ProgressRing>
       <p className={clsx("mt-1 text-sm font-extrabold", locked ? "text-ink-300" : "text-ink-700")}>{skill.title}</p>
-      {completed && (
-        <p className="text-xs font-black text-sun-500" aria-label={`Mastery ${skill.mastery} of ${skill.mastery_cap}`}>
-          {"★".repeat(skill.mastery)}
-          <span className="text-ink-200">{"★".repeat(skill.mastery_cap - skill.mastery)}</span>
-        </p>
-      )}
       {open && <SkillPopover skill={skill} theme={theme} />}
     </div>
   );
@@ -122,7 +118,7 @@ function SkillPopover({ skill, theme }: { skill: Skill; theme: string }) {
         <>
           <p className="mt-3 text-sm font-bold opacity-90">
             {completed
-              ? `Mastery ${skill.mastery}/${skill.mastery_cap} – replay to level up`
+              ? `Crown level ${skill.mastery}/${skill.mastery_cap} – replay to level up`
               : `Lesson ${nextLesson?.position ?? 1} of ${skill.lessons_total}: ${nextLesson?.title ?? ""}`}
           </p>
           {skill.next_lesson_id && (

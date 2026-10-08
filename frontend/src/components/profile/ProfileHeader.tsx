@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Avatar } from "@/components/ui/Avatar";
 import { ProgressBar } from "@/components/ui/Progress";
 import type { Learner } from "@/lib/types";
@@ -6,7 +8,10 @@ export function ProfileHeader({ learner }: { learner: Learner }) {
   const joined = new Date(learner.joined_at).toLocaleDateString(undefined, { month: "long", year: "numeric" });
   const { level, xp_into_level, xp_for_next_level } = learner.level;
   return (
-    <header className="flex flex-col items-center gap-5 rounded-3xl bg-gradient-to-br from-leaf-50 to-ocean-50 p-6 text-center sm:flex-row sm:text-left">
+    <header className="relative flex flex-col items-center gap-5 rounded-3xl bg-gradient-to-br from-leaf-50 to-ocean-50 p-6 text-center sm:flex-row sm:text-left">
+      <Link href="/settings" aria-label="Settings" className="absolute right-4 top-4 rounded-xl p-2 text-2xl hover:bg-white/60">
+        ⚙️
+      </Link>
       <div className="relative">
         <Avatar name={learner.display_name} color={learner.avatar_color} size={112} />
         <span className="absolute -bottom-2 -right-2 rounded-xl border-2 border-white bg-grape-500 px-2 py-0.5 text-sm font-black text-white">

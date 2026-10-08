@@ -7,14 +7,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        leaf: { 50: "#EEFBEF", 100: "#D5F5D9", 200: "#AEEBB8", 400: "#5BD16F", 500: "#3DBE5B", 600: "#2FA34B", 700: "#23853B" },
-        ocean: { 50: "#EAF6FE", 100: "#CDEBFC", 400: "#4DB8F5", 500: "#2EA6F0", 600: "#1C89CC", 700: "#146CA3" },
-        sun: { 50: "#FFF8E6", 100: "#FFEDC2", 400: "#FFC547", 500: "#FFB020", 600: "#E59400" },
-        coral: { 50: "#FFF0F0", 100: "#FFD9DB", 400: "#FF7B7F", 500: "#FF4B55", 600: "#E0353F", 700: "#B8262F" },
+        // Duolingo-style palette. 500 = fill, 600/700 = the darker "3D edge" shade.
+        leaf: { 50: "#F1FFE6", 100: "#D7FFB8", 200: "#A5ED6E", 400: "#79D634", 500: "#58CC02", 600: "#58A700", 700: "#4A8F00" },
+        ocean: { 50: "#DDF4FF", 100: "#BCE9FF", 400: "#49C0F8", 500: "#1CB0F6", 600: "#1899D6", 700: "#1482B8" },
+        sun: { 50: "#FFF8DB", 100: "#FFF0B3", 400: "#FFD43B", 500: "#FFC800", 600: "#E5A800" },
+        coral: { 50: "#FFF0F0", 100: "#FFDFE0", 400: "#FF7878", 500: "#FF4B4B", 600: "#EA2B2B", 700: "#C81F1F" },
         gem: { 50: "#E8FAFD", 400: "#4FD1E8", 500: "#1CB8D9", 600: "#1393AE" },
-        flame: { 50: "#FFF3E8", 400: "#FFA24D", 500: "#FF8A1F", 600: "#E5700A" },
-        grape: { 50: "#F3EFFF", 400: "#9B7BFF", 500: "#7C5CFF", 600: "#6142E0" },
-        ink: { 50: "#F7F9FB", 100: "#EEF2F6", 200: "#DCE3EB", 300: "#B7C2D0", 400: "#8D9AAB", 500: "#6B7A8F", 700: "#3C4A5C", 900: "#1F2A37" },
+        flame: { 50: "#FFF3E0", 400: "#FFB020", 500: "#FF9600", 600: "#E07F00" },
+        grape: { 50: "#F7EEFF", 400: "#DCA8FF", 500: "#CE82FF", 600: "#A568CC" },
+        ink: { 50: "#F7F7F7", 100: "#F0F0F0", 200: "#E5E5E5", 300: "#CECECE", 400: "#AFAFAF", 500: "#777777", 700: "#4B4B4B", 900: "#3C3C3C" },
       },
       fontFamily: { sans: ["var(--font-nunito)", "ui-rounded", "system-ui", "sans-serif"] },
       borderRadius: { "4xl": "2rem" },

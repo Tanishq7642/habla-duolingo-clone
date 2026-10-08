@@ -63,3 +63,13 @@ export function useUpdateSettings() {
     },
   });
 }
+
+/** Demo tools change "today" or the whole dataset, so every view is stale afterwards. */
+export function useDemoTools() {
+  const client = useQueryClient();
+  const refreshAll = () => client.invalidateQueries();
+  return {
+    timeTravel: useMutation({ mutationFn: api.timeTravel, onSuccess: refreshAll }),
+    reset: useMutation({ mutationFn: api.resetDemo, onSuccess: refreshAll }),
+  };
+}

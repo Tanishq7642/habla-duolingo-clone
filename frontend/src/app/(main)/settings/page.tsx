@@ -4,7 +4,9 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 
 import { PageShell } from "@/components/layout/PageShell";
+import { DemoTools } from "@/components/settings/DemoTools";
 import { Button } from "@/components/ui/Button";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
@@ -109,6 +111,16 @@ export default function SettingsPage() {
       <Button className="mt-8" block disabled={!dirty || !name.trim()} loading={update.isPending} onClick={save}>
         Save changes
       </Button>
+
+      <section className="mt-10 space-y-3" aria-labelledby="more-settings">
+        <h2 id="more-settings" className="text-lg font-black">Account</h2>
+        <ComingSoon icon="🔐" title="Sign in & password" body="This demo runs as a single default learner." />
+        <ComingSoon icon="🔔" title="Notifications" body="Streak reminders and weekly progress emails." />
+        <ComingSoon icon="🎙️" title="Speaking exercises" body="Pronunciation practice with speech recognition." />
+        <ComingSoon icon="🌍" title="Other courses" body="Only Spanish is seeded in this demo." />
+      </section>
+
+      <DemoTools />
     </PageShell>
   );
 }

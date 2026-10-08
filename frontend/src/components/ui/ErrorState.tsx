@@ -19,14 +19,22 @@ export function describeError(error: unknown): { title: string; body: string } {
         body: "The learning server isn't responding. Make sure the API is running, then try again.",
       };
     }
+    if (error.code === "lesson_locked") return { title: "Lesson locked 🔒", body: error.message };
+    if (error.code === "out_of_hearts") return { title: "Out of hearts", body: error.message };
     if (error.status === 404) return { title: "Not found", body: error.message };
     return { title: "That didn't work", body: error.message };
   }
   return { title: "Unexpected error", body: "Please try again. If it keeps happening, reload the page." };
 }
 
-export function ErrorState({ error, onRetry, retrying, compact }: Props) {
+/** Retrying only helps for transient failures (offline, 5xx); a 403/404 won't change. */
+export function isRetryable(error: unknown): boolean {
+  return !(error instanceof ApiError) || error.isNetwork || error.status >= 500;
+}
+
+export function ErrorState({ error, onRetry: retry, retrying, compact }: Props) {
   const { title, body } = describeError(error);
+  const onRetry = isRetryable(error) ? retry : undefined;
   if (compact) {
     return (
       <div role="alert" className="rounded-2xl border-2 border-coral-100 bg-coral-50 p-4 text-sm">
@@ -50,6 +58,11 @@ export function ErrorState({ error, onRetry, retrying, compact }: Props) {
           <Button onClick={onRetry} loading={retrying}>
             Try again
           </Button>
+        )}
+        {error instanceof ApiError && error.code === "out_of_hearts" && (
+          <ButtonLink href="/practice" variant="secondary">
+            Practice +1 ❤️
+          </ButtonLink>
         )}
         <ButtonLink href="/" variant="ghost">
           Go home

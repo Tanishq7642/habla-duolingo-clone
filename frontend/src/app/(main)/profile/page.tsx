@@ -5,6 +5,7 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { StatsGrid } from "@/components/profile/StatsGrid";
 import { ActivityCard } from "@/components/gamification/ActivityCard";
 import { PageShell } from "@/components/layout/PageShell";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useStats } from "@/lib/queries";
@@ -26,6 +27,7 @@ export default function ProfilePage() {
           <ProfileHeader learner={stats.data.learner} />
           <StatsGrid stats={stats.data} />
           <AchievementGrid achievements={stats.data.achievements} />
+          <ComingSoon icon="👥" title="Friends" body="Follow friends and compare progress." />
         </div>
       )}
     </PageShell>

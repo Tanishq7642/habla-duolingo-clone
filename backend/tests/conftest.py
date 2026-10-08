@@ -1,4 +1,8 @@
+import os
 from datetime import datetime, timezone
+
+# Tests use their own in-memory DB; never auto-seed the developer's habla.db.
+os.environ["HABLA_AUTO_SEED"] = "false"
 
 import pytest
 from fastapi.testclient import TestClient

@@ -39,6 +39,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   } catch {
     throw new ApiError(0, "network_error", "We can't reach the Habla servers. Check your connection.");
   }
+  if (res.status === 204) return undefined as T;
   if (res.ok) return (await res.json()) as T;
 
   let code = "http_error";
@@ -83,4 +84,8 @@ export const api = {
   startPractice: () => post<Session>("/practice/start"),
 
   leaderboard: (period: "week" | "all") => request<Leaderboard>(`/leaderboard?period=${period}`),
+
+  // Demo tools (simulate days passing / reset the seeded learner)
+  timeTravel: (days: number) => post<Learner>("/dev/time-travel", { days }),
+  resetDemo: () => request<void>("/dev/reset", { method: "POST" }),
 };

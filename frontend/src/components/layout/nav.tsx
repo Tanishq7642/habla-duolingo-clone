@@ -4,11 +4,15 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Same sections as Duolingo's web sidebar. `mobile: false` items live elsewhere on phones
+// (Settings is reachable from the Profile header) to keep the tab bar at 5 targets.
 const NAV = [
-  { href: "/", label: "Learn", icon: "🏠" },
-  { href: "/leaderboard", label: "Leaderboard", icon: "🏆" },
-  { href: "/profile", label: "Profile", icon: "🙂" },
-  { href: "/settings", label: "Settings", icon: "⚙️" },
+  { href: "/", label: "Learn", icon: "🏠", mobile: true },
+  { href: "/leaderboard", label: "Leaderboards", icon: "🏆", mobile: true },
+  { href: "/quests", label: "Quests", icon: "🎯", mobile: true },
+  { href: "/shop", label: "Shop", icon: "🛍️", mobile: true },
+  { href: "/profile", label: "Profile", icon: "🙂", mobile: true },
+  { href: "/settings", label: "More", icon: "⚙️", mobile: false },
 ] as const;
 
 function useIsActive() {
@@ -61,14 +65,14 @@ export function MobileNav() {
       aria-label="Main"
       className="fixed inset-x-0 bottom-0 z-30 flex border-t-2 border-ink-100 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden"
     >
-      {NAV.map((item) => {
+      {NAV.filter((item) => item.mobile).map((item) => {
         const active = isActive(item.href);
         return (
           <Link
             key={item.href}
             href={item.href}
             aria-current={active ? "page" : undefined}
-            className="flex flex-1 flex-col items-center gap-0.5 py-2"
+            className="flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2"
           >
             <span
               className={clsx(
@@ -79,7 +83,7 @@ export function MobileNav() {
             >
               {item.icon}
             </span>
-            <span className={clsx("text-[11px] font-extrabold", active ? "text-ocean-600" : "text-ink-400")}>{item.label}</span>
+            <span className={clsx("max-w-full truncate text-[10px] font-extrabold", active ? "text-ocean-600" : "text-ink-400")}>{item.label}</span>
           </Link>
         );
       })}

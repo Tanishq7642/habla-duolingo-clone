@@ -8,7 +8,7 @@ import type { Tile } from "@/lib/types";
 import { tileClass, type ExerciseProps, type TileState } from "./shared";
 
 type Side = "left" | "right";
-const PAIR_COLORS = ["#2EA6F0", "#7C5CFF", "#FFB020", "#E64980", "#13B5A6", "#FF8A1F"];
+const PAIR_COLORS = ["#1CB0F6", "#CE82FF", "#FF9600", "#E64980", "#13B5A6", "#FFC800"];
 
 /**
  * Tap one word on each side to pair them; tap a paired word to unpair.

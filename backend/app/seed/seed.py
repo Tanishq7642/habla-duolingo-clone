@@ -12,7 +12,7 @@ obey exactly the same rules as live play.
 import random
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import Engine
+from sqlalchemy import Engine, func, inspect, select
 from sqlalchemy.orm import Session
 
 from app.core.config import GameRules, get_settings
@@ -151,7 +151,7 @@ def play_lesson(db: Session, user: User, lesson: Lesson, wrong_positions: list[i
 
 
 def seed_demo(db: Session, course: Course, now: datetime, rules: GameRules) -> User:
-    demo = User(username=get_settings().demo_username, display_name="Alex", avatar_color="#3DBE5B",
+    demo = User(username=get_settings().demo_username, display_name="Alex", avatar_color="#58CC02",
                 timezone="UTC", active_course_id=course.id, hearts=rules.max_hearts,
                 gems=DEMO_START_GEMS, daily_goal_xp=20, created_at=now - timedelta(days=30))
     db.add(demo)
@@ -176,6 +176,20 @@ def run(engine: Engine, now: datetime | None = None) -> None:
         seed_rivals(db, course, now, random.Random(42))
         db.commit()
         seed_demo(db, course, now, rules)
+
+
+def ensure_seeded(engine: Engine) -> bool:
+    """Seed only if the database has no learners yet. Returns True if it seeded.
+
+    Hosting platforms often start with an empty disk, so the API seeds itself
+    on first boot instead of requiring a manual step.
+    """
+    if inspect(engine).has_table("users"):
+        with Session(engine) as db:
+            if db.scalar(select(func.count(User.id))):
+                return False
+    run(engine)
+    return True
 
 
 def main() -> None:

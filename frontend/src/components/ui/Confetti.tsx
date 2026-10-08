@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-const COLORS = ["#3DBE5B", "#FFB020", "#2EA6F0", "#FF4B55", "#7C5CFF", "#1CB8D9"];
+const COLORS = ["#58CC02", "#FFC800", "#1CB0F6", "#FF4B4B", "#CE82FF", "#FF9600"];
 
 /** Lightweight CSS confetti. Respects prefers-reduced-motion via globals.css. */
 export function Confetti({ pieces = 60 }: { pieces?: number }) {

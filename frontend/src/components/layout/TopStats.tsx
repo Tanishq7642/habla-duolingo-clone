@@ -8,12 +8,14 @@ import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { CourseFlag } from "@/components/ui/CourseFlag";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
 import { useLearner, useRefillHearts } from "@/lib/queries";
 
 /** 🔥 streak · 💎 gems · ❤️ hearts · ⚡ XP – each opens a popover explaining the metric. */
 export function TopStats({ className }: { className?: string }) {
   const { data: me, isPending } = useLearner();
   const refill = useRefillHearts();
+  const toast = useToast();
 
   if (isPending || !me) {
     return (
@@ -94,7 +96,7 @@ export function TopStats({ className }: { className?: string }) {
               block
               disabled={me.gems < me.heart_refill_cost}
               loading={refill.isPending}
-              onClick={() => refill.mutate()}
+              onClick={() => refill.mutate(undefined, { onSuccess: () => toast("Hearts refilled!", { tone: "success", icon: "❤️" }) })}
             >
               Refill · 💎 {me.heart_refill_cost}
             </Button>

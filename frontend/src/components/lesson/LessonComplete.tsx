@@ -6,6 +6,7 @@ import { useState } from "react";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { Button } from "@/components/ui/Button";
 import { Confetti } from "@/components/ui/Confetti";
+import { CrownBadge } from "@/components/ui/Crown";
 import { Mascot } from "@/components/ui/Mascot";
 import { ProgressBar } from "@/components/ui/Progress";
 import type { Completion } from "@/lib/types";
@@ -75,9 +76,8 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
                 </span>
               </div>
               {c.skill.completed && (
-                <p className="mt-1 text-sm font-bold text-ink-500">
-                  Mastery {"★".repeat(c.skill.mastery)}
-                  <span className="text-ink-200">{"★".repeat(c.skill.mastery_cap - c.skill.mastery)}</span>
+                <p className="mt-1 flex items-center gap-2 text-sm font-bold text-ink-500">
+                  <CrownBadge level={c.skill.mastery} max={c.skill.mastery_cap} /> Crown level {c.skill.mastery} of {c.skill.mastery_cap}
                 </p>
               )}
             </Row>

@@ -7,8 +7,8 @@ gamification (hearts, XP, streaks, daily goals, mastery, achievements, leaderboa
 Everything visual is original: the mascot **Pip** is hand-written SVG, sounds are synthesised
 with Web Audio, and there are no third-party image or audio assets.
 
-> Deeper design notes (ER model, state machine, API contract, gamification flow):
-> [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+> * Deeper design notes (ER model, state machine, API contract, gamification flow):
+>   [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 
 ---
 
@@ -45,7 +45,7 @@ Re-run `python -m app.seed.seed` at any time to reset.
 ### Tests
 
 ```bash
-cd backend  && python -m pytest          # 61 tests: validation, hearts, idempotency, unlocks, streaks, API flow
+cd backend  && python -m pytest          # 65 tests: validation, hearts, idempotency, unlocks, streaks, API flow, demo tools
 cd frontend && npm test                  # 17 tests: lesson state machine + exercise interactions
 cd frontend && npm run typecheck && npm run build
 ```
@@ -56,7 +56,7 @@ cd frontend && npm run typecheck && npm run build
 
 | Area | What it does |
 |---|---|
-| **Learning path** | Units → skills rendered as a winding trail from backend data. Skill nodes show locked / available / in-progress / completed, a progress ring, and 0–5 mastery stars. Popover lists lessons and starts the next one. |
+| **Learning path** | Units → skills rendered as a winding trail from backend data. Skill nodes show locked / available / in-progress / completed, a progress ring, and a **crown level (0–5)**. Popover lists lessons and starts the next one. |
 | **Lesson engine** | 5 exercise types (multiple choice with pictures, fill-in-the-blank, word bank, match pairs, typed answer) plugged in via a registry. Missed exercises come back at the end. Refreshing mid-lesson resumes exactly where you were. |
 | **Feedback** | Bottom action bar: Check → correct (praise, combo, flying +XP) or incorrect (shake, correct answer, explanation). Enter and number keys work throughout. |
 | **Hearts** | −1 per mistake in lessons, persisted immediately. At zero: refill with gems, earn one through practice, or end the lesson. |
@@ -66,7 +66,9 @@ cd frontend && npm run typecheck && npm run build
 | **Mistake review** | After a session: "You said / Correct / why" for every missed exercise. |
 | **Achievements** | Data-driven (`metric ≥ threshold` rows). Unlocks appear on the completion screen; locked ones show progress. |
 | **Leaderboard** | Weekly (rolling 7 days, from activity data) and all-time, with the current learner highlighted and pinned if outside the top list. |
-| **Profile & settings** | Level progress, stats grid, achievements, 7-day momentum chart; daily goal / name / sound settings. |
+| **Profile & settings** | Level progress, stats grid, achievements, 7-day momentum chart; daily goal / name / sound settings; account/notification placeholders. |
+| **Quests & Shop** | Daily quests derived from real activity (XP, lessons, streak). The shop refills hearts with (mocked) gems; Super and Streak Freeze are "coming soon". |
+| **Demo tools** | Settings → *Next day* / *Skip a day* / *Reset demo* make the day-based rules (streak, daily goal) demonstrable without waiting for midnight. |
 | **Resilience** | Skeletons, specific error messages with retry, answer kept on network failure, completion retry that can't double-award, 404 page. |
 | **Responsive & a11y** | Bottom tab bar on mobile and a sidebar plus right rail on desktop. Touch-sized tiles, semantic buttons/radios, visible focus rings, aria-live feedback, reduced-motion support, no colour-only states (icons/text accompany colour). |
 
@@ -199,6 +201,7 @@ All under `/api`. Interactive docs live at `http://127.0.0.1:8000/docs`. Errors 
 | GET | `/attempts/{id}/review` | Mistakes with your answer + solution; 409 while in progress |
 | GET | `/practice/summary` · POST `/practice/start` | Smart practice |
 | GET | `/leaderboard?period=week\|all` | 422 for other periods |
+| POST | `/dev/time-travel` · `/dev/reset` | Demo tools: `{days}` shifts the learner's history back (= days passing); reset re-seeds. Disable with `HABLA_ENABLE_DEV_TOOLS=false` |
 
 ```jsonc
 // POST /api/attempts/42/answers
@@ -307,13 +310,41 @@ returns. Unit themes and flags are data-keyed.
 
 ---
 
+## Deployment
+
+**Backend → Render** (or Railway via `backend/Procfile`). The repo's [`render.yaml`](render.yaml) is a
+Blueprint: New → Blueprint → pick the repo. It installs `backend/requirements.txt` and runs
+`uvicorn app.main:app --host 0.0.0.0 --port $PORT`. On first boot with an empty database the API
+**seeds itself** (`HABLA_AUTO_SEED=true`), so no manual step is needed. Health check: `/api/health`.
+
+**Frontend → Vercel.** Import the repo with root directory **`frontend`** and set
+`HABLA_API_ORIGIN=https://<your-render-service>.onrender.com` *before* the first build (Next bakes
+rewrites in at build time). The browser only talks to the Vercel origin, and Vercel proxies `/api/*`
+to Render, so CORS isn't involved.
+
+Environment variables (all optional locally):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `HABLA_DATABASE_URL` | `sqlite:///backend/habla.db` | SQLAlchemy URL |
+| `HABLA_AUTO_SEED` | `true` | Seed when the DB has no learners |
+| `HABLA_ENABLE_DEV_TOOLS` | `true` | `/api/dev/*` demo endpoints |
+| `HABLA_CORS_ORIGINS` | localhost:3000 | Only needed if the browser calls the API directly |
+| `HABLA_API_ORIGIN` (frontend) | `http://127.0.0.1:8000` | Where Next proxies `/api` |
+
+Free Render instances sleep when idle. The first request after a while can take ~50s; the UI
+shows "Can't reach Habla" with a retry button meanwhile. Their disk is ephemeral, so the demo
+data resets on restart (and re-seeds automatically).
+
 ## Assumptions & trade-offs
 
 * **Single demo identity** rather than auth flows, as the brief said not to over-engineer authentication.
 * **XP is credited at completion only.** Abandoning a lesson forfeits its XP (but practice history
   still counts toward weak-area detection). The per-answer `xp_earned` is shown as provisional.
-* **Hearts don't regenerate over time.** Practice and gem refills are the recovery paths (the seed
-  simulates one overnight heart).
+* **Hearts don't regenerate over time.** The brief allows "over time *or* via practice/refill"; Habla
+  uses practice (+1 heart, free) and a gem refill (the seed simulates one overnight heart).
+* **Crowns** are the UI name for the backend's `mastery` field: crown level N = every lesson in the skill
+  completed N times.
 * **Typed answers** forgive case, whitespace and punctuation (including ¿ ¡), and accept missing
   accents *with a note*. Spelling mistakes are wrong. `ñ` is treated as a letter, not an accented n.
 * **Weekly leaderboard** is a rolling 7 days rather than calendar weeks, so it's never empty on Mondays.

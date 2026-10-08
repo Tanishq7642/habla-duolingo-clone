@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     # Simplified identity: requests without X-User-Id act as the seeded demo learner.
     demo_username: str = "demo"
     sql_echo: bool = False
+    # Time travel / reset endpoints for demos (see services/dev_service.py).
+    enable_dev_tools: bool = True
+    # Seed the demo course automatically when the database is empty (fresh deploys).
+    auto_seed: bool = True
 
     rules: GameRules = GameRules()
 
