@@ -4,6 +4,8 @@ Habla is a Duolingo-inspired Spanish course built as a **production-style vertic
 learning path driven by real backend state, a reusable lesson engine, and server-authoritative
 gamification (hearts, XP, streaks, daily goals, mastery, achievements, leaderboard).
 
+**Live demo:** https://habla-web-one.vercel.app (API: https://habla-api-cyan.vercel.app/docs)
+
 Everything visual is original: the mascot **Pip** is hand-written SVG, sounds are synthesised
 with Web Audio, and there are no third-party image or audio assets.
 
