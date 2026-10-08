@@ -1,5 +1,7 @@
 import clsx from "clsx";
 
+import { rem } from "@/lib/units";
+
 export type MascotMood = "happy" | "cheer" | "sad" | "think";
 
 interface Props {
@@ -17,8 +19,7 @@ export function Mascot({ mood = "happy", size = 96, className, float }: Props) {
   return (
     <svg
       viewBox="0 0 120 120"
-      width={size}
-      height={size}
+      style={{ width: rem(size), height: rem(size) }}
       role="img"
       aria-label={`Pip the sprout looks ${mood === "think" ? "thoughtful" : mood}`}
       className={clsx(float && "animate-float", className)}

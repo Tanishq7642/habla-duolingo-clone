@@ -81,6 +81,7 @@ npm run e2e                                      # 21 scenarios × 2 viewports
 | **Leaderboard** | Weekly (rolling 7 days, from activity data) and all-time, with the current learner highlighted and pinned if outside the top list. |
 | **Profile & settings** | Level progress, stats grid, achievements, 7-day momentum chart; daily goal / name / sound settings; account/notification placeholders. |
 | **Quests & Shop** | Daily quests derived from real activity (XP, lessons, streak). The shop refills hearts with (mocked) gems; Super and Streak Freeze are "coming soon". |
+| **Proportions** | Root font size is 90% so the UI matches Duolingo's denser web layout. All sizes (including SVG illustrations, rings and path offsets) are rem-based via `src/lib/units.ts`, so that single value scales everything, and a user's own browser font-size preference still applies. |
 | **Dark mode** | Duolingo-style dark theme (Settings → Appearance: Light / Dark / System). Every colour is a CSS variable generated from one palette (`frontend/scripts/palette.mjs`), so components need no `dark:` variants; a pre-paint script prevents a white flash. Accessibility scans run in both themes. |
 | **Demo tools** | Settings → *Next day* / *Skip a day* / *Reset demo* make the day-based rules (streak, daily goal) demonstrable without waiting for midnight. |
 | **Resilience** | Skeletons, specific error messages with retry, answer kept on network failure, completion retry that can't double-award, 404 page. |

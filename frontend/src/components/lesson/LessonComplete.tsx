@@ -130,7 +130,7 @@ const tileTones = {
 function StatTile({ label, tone, icon, children }: { label: string; tone: keyof typeof tileTones; icon: string; children: React.ReactNode }) {
   return (
     <div className={clsx("animate-pop overflow-hidden rounded-2xl border-2", tileTones[tone])}>
-      <p data-brand-surface className="py-1 text-[11px] font-black uppercase tracking-wider text-white">{label}</p>
+      <p data-brand-surface className="py-1 text-[0.6875rem] font-black uppercase tracking-wider text-white">{label}</p>
       <p className="flex items-center justify-center gap-1.5 rounded-xl bg-surface py-3 text-xl font-black text-ink-900">
         <span aria-hidden>{icon}</span>
         {children}

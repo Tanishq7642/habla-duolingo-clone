@@ -22,7 +22,7 @@ export function ActivityCard() {
 
   return (
     <Card title="Learning momentum">
-      <p className="text-sm font-bold text-ink-500">
+      <p className="text-base font-bold text-ink-500">
         {active_days === 0
           ? "No activity this week yet – today's a great day to start."
           : `You learned on ${active_days} of the last ${window_days} days${active_days >= 5 ? " – unstoppable! 🚀" : "."}`}
@@ -33,13 +33,13 @@ export function ActivityCard() {
           const met = d.xp >= d.goal_xp;
           return (
             <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
-              <div className="relative flex h-20 w-full items-end rounded-lg bg-ink-50">
+              <div className="relative flex h-24 w-full items-end rounded-lg bg-ink-50">
                 <div
                   className={clsx("w-full rounded-lg transition-[height] duration-700", met ? "bg-sun-500" : d.xp > 0 ? "bg-leaf-400" : "bg-transparent")}
                   style={{ height: `${(d.xp / max) * 100}%` }}
                 />
               </div>
-              <span className={clsx("text-xs font-black", isToday ? "text-ocean-800" : "text-ink-500")}>{weekday(d.date)}</span>
+              <span className={clsx("text-sm font-black", isToday ? "text-ocean-800" : "text-ink-500")}>{weekday(d.date)}</span>
             </div>
           );
         })}
@@ -47,7 +47,7 @@ export function ActivityCard() {
       {recent.length > 0 && (
         <ul className="mt-5 space-y-2 border-t-2 border-ink-100 pt-4">
           {recent.slice(0, 3).map((r) => (
-            <li key={r.attempt_id} className="flex items-center justify-between gap-2 text-sm">
+            <li key={r.attempt_id} className="flex items-center justify-between gap-2 text-base">
               <span className="truncate font-bold text-ink-700">
                 {r.kind === "practice" ? "💪 " : "📘 "}
                 {r.title}

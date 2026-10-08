@@ -16,8 +16,8 @@ export function PracticeCard() {
   return (
     <Card title="Smart practice" className="border-grape-400/30 bg-grape-50/60">
       <div className="flex gap-3">
-        <span className="text-4xl" aria-hidden>💪</span>
-        <p className="text-sm font-semibold text-ink-700">
+        <span className="text-5xl" aria-hidden>💪</span>
+        <p className="text-base font-semibold text-ink-700">
           {!data.available
             ? data.reason
             : weak > 0

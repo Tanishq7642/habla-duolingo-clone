@@ -18,25 +18,25 @@ export function DailyGoalCard() {
   return (
     <Card
       title="Daily goal"
-      action={<Link href="/settings" className="text-sm font-extrabold uppercase text-ocean-800 hover:text-ocean-600">Edit</Link>}
+      action={<Link href="/settings" className="text-base font-extrabold uppercase text-ocean-800 hover:text-ocean-600">Edit</Link>}
       className={clsx(reached && "border-sun-400 bg-sun-50")}
     >
       <div className="flex items-center gap-4">
-        <Mascot size={64} mood={reached ? "cheer" : "happy"} className={clsx(reached && "animate-float")} />
+        <Mascot size={76} mood={reached ? "cheer" : "happy"} className={clsx(reached && "animate-float")} />
         <div className="flex-1">
-          <p className="font-extrabold text-ink-700">
+          <p className="text-[1.1rem] font-extrabold text-ink-700">
             {reached ? "Goal reached – nicely done! 🎉" : `Earn ${goal_xp - xp_today} more XP today`}
           </p>
           <div className="mt-2 flex items-center gap-3">
             <ProgressBar value={xp_today / goal_xp} color="sun" label="Daily XP goal" />
-            <span className="shrink-0 text-sm font-black tabular-nums text-ink-500">
+            <span className="shrink-0 text-base font-black tabular-nums text-ink-500">
               {xp_today}/{goal_xp}
             </span>
           </div>
         </div>
       </div>
       {me.streak.at_risk && (
-        <p className="mt-4 rounded-2xl bg-flame-50 px-4 py-2 text-sm font-bold text-flame-800">
+        <p className="mt-4 rounded-2xl bg-flame-50 px-4 py-3 text-base font-bold text-flame-800">
           🔥 Your {me.streak.current}-day streak ends at midnight – one lesson keeps it alive.
         </p>
       )}

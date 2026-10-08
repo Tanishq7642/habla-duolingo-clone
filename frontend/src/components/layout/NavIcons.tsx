@@ -5,11 +5,13 @@
  */
 import type { SVGProps } from "react";
 
+import { rem } from "@/lib/units";
+
 type IconProps = SVGProps<SVGSVGElement> & { size?: number };
 
 function Icon({ size = 32, children, ...rest }: IconProps & { children: React.ReactNode }) {
   return (
-    <svg viewBox="0 0 32 32" width={size} height={size} aria-hidden {...rest}>
+    <svg viewBox="0 0 32 32" style={{ width: rem(size), height: rem(size) }} aria-hidden {...rest}>
       {children}
     </svg>
   );

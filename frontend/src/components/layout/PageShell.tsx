@@ -17,8 +17,8 @@ export function PageShell({ children, rail, narrow }: { children: ReactNode; rai
         <div className="xl:pt-8">{children}</div>
       </main>
       {rail && (
-        <aside className="sticky top-0 hidden h-[100dvh] w-96 shrink-0 space-y-5 overflow-y-auto overflow-x-hidden py-6 xl:block" aria-label="Your progress">
-          <TopStats />
+        <aside className="sticky top-0 hidden h-[100dvh] w-[25.5rem] shrink-0 space-y-6 overflow-y-auto overflow-x-hidden py-6 xl:block" aria-label="Your progress">
+          <TopStats size="lg" />
           {rail}
         </aside>
       )}

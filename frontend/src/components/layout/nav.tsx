@@ -86,7 +86,7 @@ export function MobileNav() {
             >
               <item.Icon size={28} />
             </span>
-            <span className={clsx("max-w-full truncate text-[10px] font-extrabold", active ? "text-ocean-800" : "text-ink-500")}>{item.label}</span>
+            <span className={clsx("max-w-full truncate text-[0.625rem] font-extrabold", active ? "text-ocean-800" : "text-ink-500")}>{item.label}</span>
           </Link>
         );
       })}

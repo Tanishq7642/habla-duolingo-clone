@@ -1,5 +1,7 @@
 import clsx from "clsx";
 
+import { rem } from "@/lib/units";
+
 interface BarProps {
   value: number; // 0..1
   className?: string;
@@ -52,8 +54,9 @@ export function ProgressRing({ value, size, stroke = 8, color, track = "rgb(var(
   const c = 2 * Math.PI * r;
   const offset = c * (1 - Math.min(1, Math.max(0, value)));
   return (
-    <div className={clsx("relative", className)} style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="-rotate-90" aria-hidden>
+    <div className={clsx("relative", className)} style={{ width: rem(size), height: rem(size) }}>
+      {/* geometry in design units via viewBox; rendered size in rem */}
+      <svg viewBox={`0 0 ${size} ${size}`} className="h-full w-full -rotate-90" aria-hidden>
         <circle cx={size / 2} cy={size / 2} r={r} stroke={track} strokeWidth={stroke} fill="none" />
         <circle
           cx={size / 2}

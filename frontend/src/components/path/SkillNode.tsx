@@ -7,6 +7,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CrownBadge } from "@/components/ui/Crown";
 import { ProgressRing } from "@/components/ui/Progress";
 import type { SkillNode as Skill } from "@/lib/types";
+import { rem } from "@/lib/units";
 
 import { themeFor } from "./theme";
 
@@ -38,7 +39,7 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
   }, [open]);
 
   return (
-    <div ref={ref} className="relative flex flex-col items-center" style={{ transform: `translateX(${offset}px)` }}>
+    <div ref={ref} className="relative flex flex-col items-center" style={{ transform: `translateX(${rem(offset)})` }}>
       {isCurrent && !open && (
         <span className="absolute -top-11 z-10 animate-float rounded-xl border-2 border-ink-200 bg-surface px-3 py-1.5 text-sm font-black uppercase tracking-wide text-leaf-800 shadow-sm after:absolute after:-bottom-[7px] after:left-1/2 after:h-3 after:w-3 after:-translate-x-1/2 after:rotate-45 after:border-b-2 after:border-r-2 after:border-ink-200 after:bg-surface">
           {skill.status === "in_progress" ? "Continue" : "Start"}
@@ -57,7 +58,7 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
           aria-expanded={open}
           aria-label={`${skill.title}: ${STATUS_LABEL[skill.status]}, ${skill.lessons_completed} of ${skill.lessons_total} lessons`}
           className={clsx(
-            "flex h-[76px] w-[76px] items-center justify-center rounded-full border-b-[6px] text-4xl transition-transform duration-75",
+            "flex h-[4.75rem] w-[4.75rem] items-center justify-center rounded-full border-b-[6px] text-4xl transition-transform duration-75",
             "active:translate-y-[3px] active:border-b-[3px]",
             locked && "border-ink-300 bg-ink-200 grayscale",
             completed && "border-sun-600 bg-sun-500",

@@ -5,6 +5,11 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
+    /* Duolingo's web UI is denser than the 16px browser default. Everything in the
+       app is rem-based (see src/lib/units.ts), so this one value scales the whole
+       interface, like viewing it at 90% zoom, while still honouring a user's
+       own font-size preference (it's a percentage, not px). */
+    font-size: 90%;
   }
   body {
     @apply bg-surface font-sans text-ink-900 antialiased;

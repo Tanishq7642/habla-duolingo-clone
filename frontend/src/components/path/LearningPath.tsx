@@ -8,6 +8,7 @@ import { Mascot } from "@/components/ui/Mascot";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { usePath } from "@/lib/queries";
 import type { LearningPath as Path, UnitNode } from "@/lib/types";
+import { rem } from "@/lib/units";
 
 import { SkillNode } from "./SkillNode";
 import { TRAIL_OFFSETS, themeFor } from "./theme";
@@ -91,7 +92,7 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
       </div>
       <div className="shrink-0 rounded-2xl bg-white/20 px-3 py-2 text-center">
         <p className="text-xl font-black">{done}/{unit.skills.length}</p>
-        <p className="text-[10px] font-black uppercase tracking-wider opacity-90">skills</p>
+        <p className="text-[0.625rem] font-black uppercase tracking-wider opacity-90">skills</p>
       </div>
     </header>
   );
@@ -102,8 +103,8 @@ function PathSkeleton() {
     <div className="flex flex-col gap-10" aria-busy="true" aria-label="Loading your learning path">
       <Skeleton className="h-28 w-full" />
       {TRAIL_OFFSETS.slice(0, 5).map((x, i) => (
-        <div key={i} className="flex justify-center" style={{ transform: `translateX(${x}px)` }}>
-          <Skeleton className="h-[92px] w-[92px] rounded-full" />
+        <div key={i} className="flex justify-center" style={{ transform: `translateX(${rem(x)})` }}>
+          <Skeleton className="h-[5.75rem] w-[5.75rem] rounded-full" />
         </div>
       ))}
     </div>

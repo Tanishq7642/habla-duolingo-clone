@@ -12,7 +12,10 @@ import { useToast } from "@/components/ui/Toast";
 import { useLearner, useRefillHearts } from "@/lib/queries";
 
 /** 🔥 streak · 💎 gems · ❤️ hearts · ⚡ XP – each opens a popover explaining the metric. */
-export function TopStats({ className }: { className?: string }) {
+/** `lg` is the desktop right rail (Duolingo-sized); `md` fits the phone header. */
+export function TopStats({ className, size = "md" }: { className?: string; size?: "md" | "lg" }) {
+  const icon = size === "lg" ? "text-[1.75rem]" : "text-2xl";
+  const heart = size === "lg" ? "h-7 w-7" : "h-6 w-6";
   const { data: me, isPending } = useLearner();
   const refill = useRefillHearts();
   const toast = useToast();
@@ -35,10 +38,11 @@ export function TopStats({ className }: { className?: string }) {
         </span>
       )}
       <StatPopover
+        large={size === "lg"}
         label={`${me.streak.current} day streak`}
         trigger={
           <>
-            <span className={clsx("text-2xl", !streakOn && "grayscale")} aria-hidden>🔥</span>
+            <span className={clsx(icon, !streakOn && "grayscale")} aria-hidden>🔥</span>
             <span className={streakOn ? "text-flame-800" : "text-ink-500"}>{me.streak.current}</span>
           </>
         }
@@ -55,10 +59,11 @@ export function TopStats({ className }: { className?: string }) {
       </StatPopover>
 
       <StatPopover
+        large={size === "lg"}
         label={`${me.gems} gems`}
         trigger={
           <>
-            <span className="text-2xl" aria-hidden>💎</span>
+            <span className={icon} aria-hidden>💎</span>
             <span className="text-gem-800"><AnimatedNumber value={me.gems} /></span>
           </>
         }
@@ -70,10 +75,11 @@ export function TopStats({ className }: { className?: string }) {
       </StatPopover>
 
       <StatPopover
+        large={size === "lg"}
         label={`${me.hearts} of ${me.max_hearts} hearts`}
         trigger={
           <>
-            <HeartIcon className={clsx("h-6 w-6", me.hearts ? "text-coral-500" : "text-ink-200")} />
+            <HeartIcon className={clsx(heart, me.hearts ? "text-coral-500" : "text-ink-200")} />
             <span className={me.hearts ? "text-coral-800" : "text-ink-500"}>{me.hearts}</span>
           </>
         }
@@ -105,10 +111,11 @@ export function TopStats({ className }: { className?: string }) {
       </StatPopover>
 
       <StatPopover
+        large={size === "lg"}
         label={`${me.total_xp} total XP`}
         trigger={
           <>
-            <span className="text-2xl" aria-hidden>⚡</span>
+            <span className={icon} aria-hidden>⚡</span>
             <span className="text-sun-800"><AnimatedNumber value={me.total_xp} /></span>
           </>
         }
@@ -123,7 +130,7 @@ export function TopStats({ className }: { className?: string }) {
   );
 }
 
-function StatPopover({ label, trigger, children }: { label: string; trigger: ReactNode; children: ReactNode }) {
+function StatPopover({ label, trigger, children, large }: { label: string; trigger: ReactNode; children: ReactNode; large?: boolean }) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
 
@@ -147,7 +154,7 @@ function StatPopover({ label, trigger, children }: { label: string; trigger: Rea
         aria-label={label}
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 rounded-xl px-1.5 py-1.5 text-lg font-black tabular-nums transition hover:bg-ink-50"
+        className={clsx("flex items-center gap-1.5 rounded-xl px-1.5 py-1.5 font-black tabular-nums transition hover:bg-ink-50", large ? "text-xl" : "text-lg")}
       >
         {trigger}
       </button>

@@ -1,4 +1,5 @@
 import type { CourseRef } from "@/lib/types";
+import { rem } from "@/lib/units";
 
 /**
  * Flag emoji don't render on Windows (they show as letters), so known course
@@ -17,7 +18,7 @@ export function CourseFlag({ course, size = 28 }: { course: CourseRef; size?: nu
   const svg = FLAGS[course.language];
   if (!svg) return <span aria-hidden>{course.flag}</span>;
   return (
-    <svg viewBox="0 0 30 20" width={size} height={(size * 2) / 3} className="rounded-[5px] border-2 border-ink-200" aria-hidden>
+    <svg viewBox="0 0 30 20" style={{ width: rem(size), height: rem((size * 2) / 3) }} className="rounded-[5px] border-2 border-ink-200" aria-hidden>
       {svg}
     </svg>
   );
