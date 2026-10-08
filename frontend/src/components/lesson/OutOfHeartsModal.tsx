@@ -44,9 +44,9 @@ export function OutOfHeartsModal({ open, onRefilled, onPractice, onQuit }: Props
         >
           Refill hearts · 💎 {cost}
         </Button>
-        {!canAfford && <p className="text-sm font-bold text-ink-400">You have 💎 {gems}. Complete lessons to earn gems.</p>}
+        {!canAfford && <p className="text-sm font-bold text-ink-500">You have 💎 {gems}. Complete lessons to earn gems.</p>}
         {refill.error && (
-          <p role="alert" className="text-sm font-bold text-coral-600">
+          <p role="alert" className="text-sm font-bold text-coral-700">
             {refill.error instanceof ApiError ? refill.error.message : "Couldn't refill hearts."}
           </p>
         )}

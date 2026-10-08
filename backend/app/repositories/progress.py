@@ -112,6 +112,18 @@ def claim_completion(db: Session, attempt_id: int, now: datetime) -> bool:
     return result.rowcount == 1
 
 
+def claim_answer_slot(db: Session, attempt_id: int, seen: int) -> bool:
+    """Optimistic lock for answering: succeeds only if nobody else has recorded
+    an answer since we read the session (answer_count is still `seen`)."""
+    result = db.execute(
+        update(LessonAttempt)
+        .where(LessonAttempt.id == attempt_id, LessonAttempt.status == "in_progress",
+               LessonAttempt.answer_count == seen)
+        .values(answer_count=seen + 1)
+    )
+    return result.rowcount == 1
+
+
 def recent_completed_attempts(db: Session, user_id: int, limit: int) -> list[LessonAttempt]:
     stmt = (
         select(LessonAttempt)

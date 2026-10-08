@@ -11,6 +11,9 @@ Rules
   * A skill is completed when each of its lessons has been completed once.
   * Mastery (0–cap) = full passes through the skill = min completions over its
     lessons; replaying lessons after completion raises it.
+  * Completion is sticky: a skill whose lessons are all done shows as completed
+    even if content is later inserted before it. Learners never lose earned
+    progress. (Edge case found by the property test in tests/test_properties.py.)
 """
 
 from dataclasses import dataclass, field
@@ -49,7 +52,9 @@ def derive_path_state(
         lesson_status: dict[int, str] = {}
         prev_lesson_done = True
         for lid, count in zip(outline.lesson_ids, counts):
-            if not unlocked or not prev_lesson_done:
+            if completed:
+                lesson_status[lid] = "completed"
+            elif not unlocked or not prev_lesson_done:
                 lesson_status[lid] = "locked"
             elif count > 0:
                 lesson_status[lid] = "completed"
@@ -57,10 +62,10 @@ def derive_path_state(
                 lesson_status[lid] = "available"
             prev_lesson_done = count > 0
 
-        if not unlocked:
-            status = "locked"
-        elif completed:
+        if completed:
             status = "completed"
+        elif not unlocked:
+            status = "locked"
         elif done > 0 or any(lid in active_lesson_ids for lid in outline.lesson_ids):
             status = "in_progress"
         else:
@@ -80,7 +85,7 @@ def derive_path_state(
 
 
 def _next_lesson(lesson_ids, counts, unlocked, completed, mastery, cap) -> int | None:
-    if not unlocked or not lesson_ids:
+    if not lesson_ids or not (unlocked or completed):
         return None
     if not completed:
         return next(lid for lid, c in zip(lesson_ids, counts) if c == 0)

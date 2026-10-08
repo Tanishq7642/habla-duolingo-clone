@@ -44,10 +44,21 @@ Re-run `python -m app.seed.seed` at any time to reset.
 
 ### Tests
 
+Five layers. [`docs/REQUIREMENTS_CHECK.md`](docs/REQUIREMENTS_CHECK.md) maps every requirement to the test that proves it.
+
 ```bash
-cd backend  && python -m pytest          # 65 tests: validation, hearts, idempotency, unlocks, streaks, API flow, demo tools
-cd frontend && npm test                  # 17 tests: lesson state machine + exercise interactions
+cd backend  && python -m pytest --cov=app   # 80 tests, 94% coverage: rules, properties (Hypothesis), API, concurrency, whole course
+cd frontend && npm test                     # 21 tests: state machine, exercises, LessonPlayer integration
 cd frontend && npm run typecheck && npm run build
+```
+
+End-to-end (Playwright, real browser, desktop **and** mobile, plus axe accessibility scans) runs against
+the app while it's running:
+
+```bash
+cd frontend && npx playwright install chromium   # once
+# with the backend on :8000 and the frontend on :3000 (ideally `npm run build && npm start`):
+npm run e2e                                      # 21 scenarios × 2 viewports
 ```
 
 ---

@@ -7,15 +7,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Duolingo-style palette. 500 = fill, 600/700 = the darker "3D edge" shade.
-        leaf: { 50: "#F1FFE6", 100: "#D7FFB8", 200: "#A5ED6E", 400: "#79D634", 500: "#58CC02", 600: "#58A700", 700: "#4A8F00" },
-        ocean: { 50: "#DDF4FF", 100: "#BCE9FF", 400: "#49C0F8", 500: "#1CB0F6", 600: "#1899D6", 700: "#1482B8" },
-        sun: { 50: "#FFF8DB", 100: "#FFF0B3", 400: "#FFD43B", 500: "#FFC800", 600: "#E5A800" },
-        coral: { 50: "#FFF0F0", 100: "#FFDFE0", 400: "#FF7878", 500: "#FF4B4B", 600: "#EA2B2B", 700: "#C81F1F" },
-        gem: { 50: "#E8FAFD", 400: "#4FD1E8", 500: "#1CB8D9", 600: "#1393AE" },
-        flame: { 50: "#FFF3E0", 400: "#FFB020", 500: "#FF9600", 600: "#E07F00" },
-        grape: { 50: "#F7EEFF", 400: "#DCA8FF", 500: "#CE82FF", 600: "#A568CC" },
-        ink: { 50: "#F7F7F7", 100: "#F0F0F0", 200: "#E5E5E5", 300: "#CECECE", 400: "#AFAFAF", 500: "#777777", 700: "#4B4B4B", 900: "#3C3C3C" },
+        // Duolingo-style palette. 500 = fill, 600/700 = the darker "3D edge" shade,
+        // 800 = text shade (WCAG AA 4.5:1 on white and on the matching 50 tint).
+        leaf: { 50: "#F1FFE6", 100: "#D7FFB8", 200: "#A5ED6E", 400: "#79D634", 500: "#58CC02", 600: "#58A700", 700: "#4A8F00", 800: "#3B7300" },
+        ocean: { 50: "#DDF4FF", 100: "#BCE9FF", 400: "#49C0F8", 500: "#1CB0F6", 600: "#1899D6", 700: "#1482B8", 800: "#0C6694" },
+        sun: { 50: "#FFF8DB", 100: "#FFF0B3", 400: "#FFD43B", 500: "#FFC800", 600: "#E5A800", 800: "#855C00" },
+        coral: { 50: "#FFF0F0", 100: "#FFDFE0", 400: "#FF7878", 500: "#FF4B4B", 600: "#EA2B2B", 700: "#C81F1F", 800: "#A51717" },
+        gem: { 50: "#E8FAFD", 400: "#4FD1E8", 500: "#1CB8D9", 600: "#1393AE", 800: "#0B6577" },
+        flame: { 50: "#FFF3E0", 400: "#FFB020", 500: "#FF9600", 600: "#E07F00", 800: "#9A4F00" },
+        grape: { 50: "#F7EEFF", 400: "#DCA8FF", 500: "#CE82FF", 600: "#A568CC", 800: "#7339A0" },
+        ink: { 50: "#F7F7F7", 100: "#F0F0F0", 200: "#E5E5E5", 300: "#CECECE", 400: "#AFAFAF", 500: "#6B6B6B", 700: "#4B4B4B", 900: "#3C3C3C" },
       },
       fontFamily: { sans: ["var(--font-nunito)", "ui-rounded", "system-ui", "sans-serif"] },
       borderRadius: { "4xl": "2rem" },

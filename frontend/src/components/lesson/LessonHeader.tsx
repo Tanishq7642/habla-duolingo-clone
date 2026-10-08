@@ -19,7 +19,7 @@ export function LessonHeader({ progress, hearts, combo, onExit }: Props) {
         type="button"
         onClick={onExit}
         aria-label="Quit lesson"
-        className="rounded-xl p-2 text-ink-300 transition hover:bg-ink-100 hover:text-ink-500"
+        className="rounded-xl p-2 text-ink-500 transition hover:bg-ink-100 hover:text-ink-500"
       >
         <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden>
           <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
@@ -28,13 +28,13 @@ export function LessonHeader({ progress, hearts, combo, onExit }: Props) {
       <div className="relative flex-1">
         <ProgressBar value={progress} label="Lesson progress" />
         {combo >= 3 && (
-          <span key={combo} className="absolute -top-6 left-1/2 -translate-x-1/2 animate-pop whitespace-nowrap text-xs font-black uppercase tracking-wider text-flame-500">
+          <span key={combo} className="absolute -top-6 left-1/2 -translate-x-1/2 animate-pop whitespace-nowrap text-xs font-black uppercase tracking-wider text-flame-800">
             {combo} in a row!
           </span>
         )}
       </div>
       {hearts === null ? (
-        <span className="rounded-xl bg-grape-50 px-3 py-1 text-sm font-extrabold text-grape-600">Practice</span>
+        <span className="rounded-xl bg-grape-50 px-3 py-1 text-sm font-extrabold text-grape-800">Practice</span>
       ) : (
         <HeartCounter hearts={hearts} />
       )}
@@ -53,7 +53,7 @@ function HeartCounter({ hearts }: { hearts: number }) {
   return (
     <div className="relative flex items-center gap-1.5" aria-label={`${hearts} hearts left`} role="status">
       <HeartIcon className={clsx("h-7 w-7", hearts === 0 ? "text-ink-200" : "text-coral-500")} />
-      <span className={clsx("text-lg font-black tabular-nums", hearts === 0 ? "text-ink-300" : "text-coral-500")}>{hearts}</span>
+      <span className={clsx("text-lg font-black tabular-nums", hearts === 0 ? "text-ink-500" : "text-coral-700")}>{hearts}</span>
       {lost > 0 && (
         <HeartIcon key={lost} className="pointer-events-none absolute left-0 top-0 h-7 w-7 animate-heart-loss text-coral-500" />
       )}

@@ -9,7 +9,7 @@ export function AchievementGrid({ achievements }: { achievements: Achievement[] 
     <section aria-labelledby="achievements-title">
       <div className="mb-4 flex items-baseline justify-between">
         <h2 id="achievements-title" className="text-2xl font-black">Achievements</h2>
-        <span className="font-black text-ink-400">{unlocked}/{achievements.length}</span>
+        <span className="font-black text-ink-500">{unlocked}/{achievements.length}</span>
       </div>
       <ul className="grid gap-3 sm:grid-cols-2">
         {achievements.map((a) => <AchievementCard key={a.code} achievement={a} />)}
@@ -38,13 +38,13 @@ export function AchievementCard({ achievement: a }: { achievement: Achievement }
         </p>
         <p className="text-sm text-ink-500">{a.description}</p>
         {done ? (
-          <p className="mt-1 text-xs font-bold text-sun-600">
+          <p className="mt-1 text-xs font-bold text-sun-800">
             Unlocked {new Date(a.unlocked_at!).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
           </p>
         ) : (
           <div className="mt-2 flex items-center gap-2">
             <ProgressBar value={a.progress / a.threshold} color="sun" className="!h-2.5" label={`${a.title} progress`} />
-            <span className="shrink-0 text-xs font-black text-ink-400">{a.progress}/{a.threshold}</span>
+            <span className="shrink-0 text-xs font-black text-ink-500">{a.progress}/{a.threshold}</span>
           </div>
         )}
       </div>

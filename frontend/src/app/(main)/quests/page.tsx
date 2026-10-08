@@ -30,7 +30,7 @@ export default function QuestsPage() {
 
   return (
     <PageShell rail={<DailyGoalCard />}>
-      <header className="rounded-3xl bg-gradient-to-br from-grape-500 to-ocean-500 p-6 text-white">
+      <header data-brand-surface className="rounded-3xl bg-gradient-to-br from-grape-500 to-ocean-500 p-6 text-white">
         <h1 className="text-3xl font-black">Daily Quests</h1>
         <p className="mt-1 font-bold opacity-90">Complete quests to stay on track. They reset at your local midnight.</p>
       </header>

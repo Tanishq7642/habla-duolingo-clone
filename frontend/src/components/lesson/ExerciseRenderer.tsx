@@ -28,7 +28,7 @@ export function ExerciseRenderer({ exercise, draft, onChange, locked, result }: 
   return (
     <section aria-labelledby={`prompt-${exercise.id}`} className="flex flex-col gap-6 sm:gap-8">
       <div>
-        <p className="text-xs font-black uppercase tracking-[0.15em] text-grape-500">{definition.kicker}</p>
+        <p className="text-xs font-black uppercase tracking-[0.15em] text-grape-800">{definition.kicker}</p>
         <h1 id={`prompt-${exercise.id}`} className="mt-1 text-2xl font-black text-ink-900 sm:text-3xl">
           {exercise.prompt}
         </h1>

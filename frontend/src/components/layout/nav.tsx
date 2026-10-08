@@ -23,7 +23,8 @@ function useIsActive() {
 export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 rounded-xl px-2" aria-label="Habla home">
-      <span className="text-3xl font-black tracking-tight text-leaf-500">habla</span>
+      {/* Logotype: brand colour on purpose (WCAG exempts logos). */}
+      <span className="text-3xl font-black tracking-tight text-leaf-500" data-brand-surface>habla</span>
     </Link>
   );
 }
@@ -44,7 +45,7 @@ export function Sidebar() {
               aria-current={active ? "page" : undefined}
               className={clsx(
                 "flex items-center gap-4 rounded-2xl border-2 px-4 py-3 text-sm font-extrabold uppercase tracking-wide transition",
-                active ? "border-ocean-400 bg-ocean-50 text-ocean-600" : "border-transparent text-ink-500 hover:bg-ink-50",
+                active ? "border-ocean-400 bg-ocean-50 text-ocean-800" : "border-transparent text-ink-500 hover:bg-ink-50",
               )}
             >
               <span className="text-2xl" aria-hidden>{item.icon}</span>
@@ -83,7 +84,7 @@ export function MobileNav() {
             >
               {item.icon}
             </span>
-            <span className={clsx("max-w-full truncate text-[10px] font-extrabold", active ? "text-ocean-600" : "text-ink-400")}>{item.label}</span>
+            <span className={clsx("max-w-full truncate text-[10px] font-extrabold", active ? "text-ocean-800" : "text-ink-500")}>{item.label}</span>
           </Link>
         );
       })}

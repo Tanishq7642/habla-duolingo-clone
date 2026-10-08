@@ -19,15 +19,15 @@ export function MistakeReview({ attemptId, onClose }: { attemptId: number | null
             <p className="text-sm font-extrabold text-ink-500">{item.prompt}</p>
             <dl className="mt-2 space-y-1">
               <div className="flex gap-2">
-                <dt className="w-24 shrink-0 text-xs font-black uppercase tracking-wide text-coral-500">You said</dt>
+                <dt className="w-24 shrink-0 text-xs font-black uppercase tracking-wide text-coral-700">You said</dt>
                 <dd className="font-bold text-ink-700 line-through decoration-coral-400">{item.your_answer}</dd>
               </div>
               <div className="flex gap-2">
-                <dt className="w-24 shrink-0 text-xs font-black uppercase tracking-wide text-leaf-600">Correct</dt>
+                <dt className="w-24 shrink-0 text-xs font-black uppercase tracking-wide text-leaf-800">Correct</dt>
                 <dd className="font-extrabold text-ink-900">{item.correct_answer}</dd>
               </div>
             </dl>
-            {item.explanation && <p className="mt-2 rounded-xl bg-ocean-50 p-3 text-sm text-ocean-700">💡 {item.explanation}</p>}
+            {item.explanation && <p className="mt-2 rounded-xl bg-ocean-50 p-3 text-sm text-ocean-800">💡 {item.explanation}</p>}
           </article>
         ))}
         {review.data && review.data.items.length === 0 && <p className="text-ink-500">No mistakes to review. 🎉</p>}

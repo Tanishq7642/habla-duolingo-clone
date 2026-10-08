@@ -21,8 +21,8 @@ export type TileState = "idle" | "selected" | "correct" | "wrong" | "used";
 
 const tileStyles: Record<TileState, string> = {
   idle: "border-ink-200 bg-white text-ink-900 hover:bg-ink-50",
-  selected: "border-ocean-400 bg-ocean-50 text-ocean-700",
-  correct: "border-leaf-400 bg-leaf-50 text-leaf-700",
+  selected: "border-ocean-400 bg-ocean-50 text-ocean-800",
+  correct: "border-leaf-400 bg-leaf-50 text-leaf-800",
   wrong: "border-coral-400 bg-coral-50 text-coral-700 animate-shake",
   used: "border-ink-100 bg-ink-100 text-transparent",
 };

@@ -30,7 +30,7 @@ export function WordBank({ exercise, value, onChange, locked, result }: Exercise
           result && !result.correct && "animate-shake",
         )}
       >
-        {placed.length === 0 && <span className="self-center px-1 text-ink-400">Tap the words below</span>}
+        {placed.length === 0 && <span className="self-center px-1 text-ink-500">Tap the words below</span>}
         {placed.map((id) => (
           <button
             key={id}
@@ -64,7 +64,7 @@ export function WordBank({ exercise, value, onChange, locked, result }: Exercise
       </div>
 
       {placed.length > 0 && !locked && (
-        <button type="button" onClick={() => set([])} className="self-center text-sm font-extrabold uppercase tracking-wide text-ink-400 hover:text-ink-700">
+        <button type="button" onClick={() => set([])} className="self-center text-sm font-extrabold uppercase tracking-wide text-ink-500 hover:text-ink-700">
           Reset
         </button>
       )}

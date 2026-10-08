@@ -14,6 +14,7 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -59,6 +60,16 @@ class LessonAttempt(TimestampMixin, Base):
     __table_args__ = (
         Index("ix_attempts_user_status", "user_id", "status"),
         Index("ix_attempts_user_lesson", "user_id", "lesson_id"),
+        # At most one *open* session per learner per lesson (partial unique index),
+        # so two parallel "start" requests can't create two sessions.
+        Index(
+            "uq_attempts_one_open_per_lesson",
+            "user_id",
+            "lesson_id",
+            unique=True,
+            sqlite_where=text("status = 'in_progress' AND lesson_id IS NOT NULL"),
+            postgresql_where=text("status = 'in_progress' AND lesson_id IS NOT NULL"),
+        ),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -66,6 +77,9 @@ class LessonAttempt(TimestampMixin, Base):
     lesson_id: Mapped[int | None] = mapped_column(ForeignKey("lessons.id"))  # null for practice
     kind: Mapped[str] = mapped_column(String(16), default="lesson")  # lesson | practice
     status: Mapped[str] = mapped_column(String(16), default="in_progress")
+    # Optimistic-concurrency version: number of answers accepted so far. Each
+    # answer must claim slot N -> N+1, so duplicate parallel submissions lose.
+    answer_count: Mapped[int] = mapped_column(Integer, default=0)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     # Reward receipt, written once at completion and replayed on duplicates.
     xp_awarded: Mapped[int] = mapped_column(Integer, default=0)

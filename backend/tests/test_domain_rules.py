@@ -104,6 +104,13 @@ class TestUnlocks:
         assert st[1].next_lesson_id == 11  # least-practised lesson to level up
         assert derive_path_state(self.skills, {10: 9, 11: 9}, 5)[1].mastery == 5
 
+    def test_completed_skill_stays_completed_if_content_is_inserted_before_it(self):
+        # Learner finished skill 2, then a new, unfinished skill 1 was inserted before it.
+        st = derive_path_state(self.skills, {20: 1, 21: 1}, 5)
+        assert st[1].status == "available"
+        assert st[2].status == "completed" and st[2].mastery == 1
+        assert st[3].status == "available"  # earned by completing skill 2
+
     def test_open_session_marks_skill_in_progress(self):
         st = derive_path_state(self.skills, {}, 5, frozenset({10}))
         assert st[1].status == "in_progress"

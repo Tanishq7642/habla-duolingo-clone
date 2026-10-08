@@ -44,7 +44,7 @@ export function MultipleChoice({ exercise, value, onChange, locked, result }: Ex
           <span className="flex items-center gap-3">
             <kbd
               className={clsx(
-                "hidden h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 border-ink-200 text-xs text-ink-400 sm:inline-flex",
+                "hidden h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 border-ink-200 text-xs text-ink-500 sm:inline-flex",
                 hasPictures && "absolute left-2 top-2",
               )}
             >

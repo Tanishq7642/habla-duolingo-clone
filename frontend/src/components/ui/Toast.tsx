@@ -11,9 +11,9 @@ const ToastContext = createContext<(message: string, opts?: { tone?: Tone; icon?
 export const useToast = () => useContext(ToastContext);
 
 const tones: Record<Tone, string> = {
-  success: "border-leaf-200 bg-leaf-50 text-leaf-700",
+  success: "border-leaf-200 bg-leaf-50 text-leaf-800",
   error: "border-coral-100 bg-coral-50 text-coral-700",
-  info: "border-ocean-100 bg-ocean-50 text-ocean-700",
+  info: "border-ocean-100 bg-ocean-50 text-ocean-800",
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {

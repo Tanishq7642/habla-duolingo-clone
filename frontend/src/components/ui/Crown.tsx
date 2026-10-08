@@ -21,7 +21,7 @@ export function CrownBadge({ level, max, className }: { level: number; max: numb
           strokeLinejoin="round"
         />
       </svg>
-      <span className={clsx("relative mt-2 text-[11px] font-black", earned ? "text-[#B87D00]" : "text-ink-400")}>{level}</span>
+      <span className={clsx("relative mt-2 text-[11px] font-black", earned ? "text-[#5C3F00]" : "text-ink-500")}>{level}</span>
     </span>
   );
 }

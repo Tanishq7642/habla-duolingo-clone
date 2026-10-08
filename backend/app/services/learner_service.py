@@ -2,6 +2,7 @@
 
 from datetime import datetime, timedelta
 
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from app.core.clock import is_valid_timezone, local_today
@@ -139,11 +140,18 @@ def update_settings(db: Session, user: User, payload: SettingsIn, now: datetime,
 
 
 def refill_hearts(db: Session, user: User, rules: GameRules) -> HeartsOut:
-    if user.hearts >= rules.max_hearts:
-        raise Conflict("Your hearts are already full.", code="hearts_full")
-    if user.gems < rules.heart_refill_cost_gems:
-        raise PaymentRequired(f"You need {rules.heart_refill_cost_gems} gems to refill hearts.")
-    user.gems -= rules.heart_refill_cost_gems
-    user.hearts = rules.max_hearts
+    cost = rules.heart_refill_cost_gems
+    # Check-and-charge in ONE conditional UPDATE, so parallel refills can't
+    # both pass the checks and double-charge (or lose an update).
+    charged = db.execute(
+        update(User)
+        .where(User.id == user.id, User.hearts < rules.max_hearts, User.gems >= cost)
+        .values(gems=User.gems - cost, hearts=rules.max_hearts)
+    ).rowcount == 1
     db.commit()
+    db.refresh(user)
+    if not charged:
+        if user.hearts >= rules.max_hearts:
+            raise Conflict("Your hearts are already full.", code="hearts_full")
+        raise PaymentRequired(f"You need {cost} gems to refill hearts.")
     return HeartsOut(hearts=user.hearts, max_hearts=rules.max_hearts, gems=user.gems)

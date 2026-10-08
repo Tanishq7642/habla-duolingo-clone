@@ -34,7 +34,7 @@ export default function ShopPage() {
     <PageShell rail={<DailyGoalCard />}>
       <div className="flex items-baseline justify-between">
         <h1 className="text-3xl font-black">Shop</h1>
-        <span className="text-lg font-black text-gem-500">💎 {gems}</span>
+        <span className="text-lg font-black text-gem-800">💎 {gems}</span>
       </div>
 
       <h2 className="mt-8 text-xl font-black">Hearts</h2>
@@ -49,7 +49,7 @@ export default function ShopPage() {
             ))}
           </div>
         </div>
-        <Button variant="ghost" size="sm" disabled={full || !affordable} loading={refill.isPending} onClick={buy} className="!text-gem-600">
+        <Button variant="ghost" size="sm" disabled={full || !affordable} loading={refill.isPending} onClick={buy} className="!text-gem-800">
           💎 {heart_refill_cost}
         </Button>
       </div>
@@ -60,7 +60,7 @@ export default function ShopPage() {
             <p className="font-extrabold">Practice to earn a heart</p>
             <p className="text-sm text-ink-500">Free. Practice never costs hearts.</p>
           </div>
-          <ButtonLink href="/practice" variant="ghost" size="sm" className="!text-ocean-600">Practice</ButtonLink>
+          <ButtonLink href="/practice" variant="ghost" size="sm" className="!text-ocean-800">Practice</ButtonLink>
         </div>
       )}
 

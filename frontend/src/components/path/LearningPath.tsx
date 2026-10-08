@@ -73,7 +73,7 @@ export function LearningPath() {
       ))}
       <div className="flex flex-col items-center gap-2 pt-4 text-center">
         <Mascot mood="think" size={90} />
-        <p className="font-extrabold text-ink-400">More units are on the way!</p>
+        <p className="font-extrabold text-ink-500">More units are on the way!</p>
       </div>
     </div>
   );
@@ -83,7 +83,7 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
   const t = themeFor(unit.theme);
   const done = unit.skills.filter((s) => s.status === "completed").length;
   return (
-    <header className={clsx("flex items-center justify-between gap-4 rounded-3xl border-b-[6px] px-5 py-4 text-white", t.banner)}>
+    <header data-brand-surface className={clsx("flex items-center justify-between gap-4 rounded-3xl border-b-[6px] px-5 py-4 text-white", t.banner)}>
       <div>
         <p className="text-xs font-black uppercase tracking-[0.15em] opacity-85">Unit {unit.position}</p>
         <h2 id={`unit-${unit.id}`} className="text-2xl font-black">{unit.title}</h2>

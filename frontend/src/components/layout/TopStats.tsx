@@ -39,7 +39,7 @@ export function TopStats({ className }: { className?: string }) {
         trigger={
           <>
             <span className={clsx("text-2xl", !streakOn && "grayscale")} aria-hidden>🔥</span>
-            <span className={streakOn ? "text-flame-500" : "text-ink-300"}>{me.streak.current}</span>
+            <span className={streakOn ? "text-flame-800" : "text-ink-500"}>{me.streak.current}</span>
           </>
         }
       >
@@ -51,7 +51,7 @@ export function TopStats({ className }: { className?: string }) {
               ? "Complete a lesson today or your streak resets at midnight."
               : "Complete a lesson to start a new streak."}
         </p>
-        <p className="mt-2 text-xs font-bold text-ink-400">Longest streak: {me.streak.longest} days</p>
+        <p className="mt-2 text-xs font-bold text-ink-500">Longest streak: {me.streak.longest} days</p>
       </StatPopover>
 
       <StatPopover
@@ -59,7 +59,7 @@ export function TopStats({ className }: { className?: string }) {
         trigger={
           <>
             <span className="text-2xl" aria-hidden>💎</span>
-            <span className="text-gem-500"><AnimatedNumber value={me.gems} /></span>
+            <span className="text-gem-800"><AnimatedNumber value={me.gems} /></span>
           </>
         }
       >
@@ -74,7 +74,7 @@ export function TopStats({ className }: { className?: string }) {
         trigger={
           <>
             <HeartIcon className={clsx("h-6 w-6", me.hearts ? "text-coral-500" : "text-ink-200")} />
-            <span className={me.hearts ? "text-coral-500" : "text-ink-300"}>{me.hearts}</span>
+            <span className={me.hearts ? "text-coral-700" : "text-ink-500"}>{me.hearts}</span>
           </>
         }
       >
@@ -109,7 +109,7 @@ export function TopStats({ className }: { className?: string }) {
         trigger={
           <>
             <span className="text-2xl" aria-hidden>⚡</span>
-            <span className="text-sun-500"><AnimatedNumber value={me.total_xp} /></span>
+            <span className="text-sun-800"><AnimatedNumber value={me.total_xp} /></span>
           </>
         }
       >

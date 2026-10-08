@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
             onClick={() => setPeriod(p.id)}
             className={clsx(
               "rounded-xl px-5 py-2 text-sm font-extrabold uppercase tracking-wide transition",
-              period === p.id ? "bg-white text-ocean-600 shadow-sm" : "text-ink-500 hover:text-ink-700",
+              period === p.id ? "bg-white text-ocean-800 shadow-sm" : "text-ink-500 hover:text-ink-700",
             )}
           >
             {p.label}
@@ -54,7 +54,7 @@ export default function LeaderboardPage() {
         )}
         {board.isError && <ErrorState error={board.error} onRetry={() => board.refetch()} retrying={board.isRefetching} />}
         {board.data && board.data.entries.length === 0 && (
-          <p className="py-10 text-center font-bold text-ink-400">No one has earned XP in this period yet. Be the first!</p>
+          <p className="py-10 text-center font-bold text-ink-500">No one has earned XP in this period yet. Be the first!</p>
         )}
         {board.data && (
           <ol className="space-y-1">
@@ -80,13 +80,13 @@ function Row({ entry }: { entry: LeaderboardEntry }) {
         entry.is_me ? "border-2 border-ocean-400 bg-ocean-50" : "hover:bg-ink-50",
       )}
     >
-      <span className="w-8 text-center text-lg font-black text-ink-400">
+      <span className="w-8 text-center text-lg font-black text-ink-500">
         {entry.rank === 0 ? "–" : MEDALS[entry.rank - 1] ?? entry.rank}
       </span>
       <Avatar name={entry.display_name} color={entry.avatar_color} />
       <span className="min-w-0 flex-1 truncate font-extrabold">
         {entry.display_name}
-        {entry.is_me && <span className="ml-2 text-xs font-black uppercase text-ocean-500">You</span>}
+        {entry.is_me && <span className="ml-2 text-xs font-black uppercase text-ocean-800">You</span>}
       </span>
       <span className="font-black tabular-nums text-ink-500">{entry.xp} XP</span>
     </li>

@@ -39,7 +39,7 @@ export function ActivityCard() {
                   style={{ height: `${(d.xp / max) * 100}%` }}
                 />
               </div>
-              <span className={clsx("text-xs font-black", isToday ? "text-ocean-500" : "text-ink-300")}>{weekday(d.date)}</span>
+              <span className={clsx("text-xs font-black", isToday ? "text-ocean-800" : "text-ink-500")}>{weekday(d.date)}</span>
             </div>
           );
         })}
@@ -51,9 +51,9 @@ export function ActivityCard() {
               <span className="truncate font-bold text-ink-700">
                 {r.kind === "practice" ? "💪 " : "📘 "}
                 {r.title}
-                {r.mistakes === 0 && <span className="ml-1 text-xs text-sun-500" title="Perfect">★</span>}
+                {r.mistakes === 0 && <span className="ml-1 text-xs text-sun-800" title="Perfect">★</span>}
               </span>
-              <span className="shrink-0 font-black text-sun-500">+{r.xp} XP</span>
+              <span className="shrink-0 font-black text-sun-800">+{r.xp} XP</span>
             </li>
           ))}
         </ul>

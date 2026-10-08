@@ -11,6 +11,7 @@ ones, least-recently-missed first), so:
 from datetime import datetime
 
 from sqlalchemy import update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.clock import local_today
@@ -131,7 +132,13 @@ def start_lesson(db: Session, user: User, lesson_id: int, rules: GameRules) -> S
     exercises = content_repo.lesson_exercises(db, lesson_id)
     if not exercises:
         raise Conflict("This lesson has no exercises yet.", code="lesson_empty")
-    attempt = create_session(db, user, kind="lesson", lesson_id=lesson_id, exercise_ids=[e.id for e in exercises])
+    try:
+        attempt = create_session(db, user, kind="lesson", lesson_id=lesson_id, exercise_ids=[e.id for e in exercises])
+    except IntegrityError:
+        # A parallel request opened the session first (unique open-session index): resume it.
+        db.rollback()
+        existing = progress_repo.open_lesson_attempt(db, user.id, lesson_id)
+        return session_view(db, user, progress_repo.get_attempt(db, existing.id), resumed=True)
     return session_view(db, user, attempt, resumed=False)
 
 
@@ -156,6 +163,13 @@ def submit_answer(db: Session, user: User, attempt_id: int, exercise_id: int, ra
     exercise = item.exercise
     handler = get_handler(exercise.type)
     result, clean_answer = handler.evaluate(exercise.data, exercise.solution, raw_answer)
+
+    # Everything above was decided from a read. Claim the next answer slot
+    # atomically so a duplicate request (double-click, two tabs) that read the
+    # same state can't also be accepted and cost a second heart.
+    if not progress_repo.claim_answer_slot(db, attempt.id, seen=len(attempt.answers)):
+        db.rollback()
+        raise Conflict("That answer was already submitted. Reload to continue.", code="out_of_order")
 
     attempt.answers.append(ExerciseAttempt(
         attempt_id=attempt.id, exercise_id=exercise.id, user_id=user.id,
@@ -208,6 +222,10 @@ def complete(db: Session, user: User, attempt_id: int, now: datetime, rules: Gam
         return _completion_view(db, user, attempt, now, rules, already_completed=True)
 
     try:
+        # We now hold the write lock (SQLite) / the attempt row (Postgres). Re-read
+        # the learner FOR UPDATE so rewards add to the latest committed totals,
+        # not to values read before another tab's completion was committed.
+        db.refresh(user, with_for_update=True)
         changes = _apply_rewards(db, user, attempt, now, rules)
         db.commit()
     except Exception:

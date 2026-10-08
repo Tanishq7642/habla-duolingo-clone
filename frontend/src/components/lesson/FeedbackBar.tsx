@@ -28,7 +28,7 @@ export function FeedbackBar({ phase, ready, result, error, combo, turn, onCheck,
         {error ? (
           <>
             <div role="alert" className="flex-1">
-              <p className="font-extrabold text-coral-600">We couldn't save your lesson yet</p>
+              <p className="font-extrabold text-coral-700">We couldn't save your lesson yet</p>
               <p className="text-sm text-ink-500">Your answers are safe on the server. Retrying is safe – you won't get double XP.</p>
             </div>
             <Button onClick={onRetryComplete} className="sm:w-44">Retry</Button>
@@ -52,30 +52,30 @@ export function FeedbackBar({ phase, ready, result, error, combo, turn, onCheck,
             aria-hidden
             className={clsx(
               "hidden h-16 w-16 shrink-0 animate-pop items-center justify-center rounded-full bg-white text-3xl font-black sm:flex",
-              good ? "text-leaf-500" : "text-coral-500",
+              good ? "text-leaf-800" : "text-coral-700",
             )}
           >
             {good ? "✓" : "✕"}
           </span>
           <div className="min-w-0">
-            <p className={clsx("text-2xl font-black", good ? "text-leaf-700" : "text-coral-700")}>
+            <p className={clsx("text-2xl font-black", good ? "text-leaf-800" : "text-coral-700")}>
               {good ? PRAISE[turn % PRAISE.length] : "Not quite"}
             </p>
-            {good && combo >= 3 && <p className="font-bold text-leaf-600">🔥 {combo} correct in a row</p>}
-            {result.note && <p className="font-bold text-sun-600">{result.note}</p>}
+            {good && combo >= 3 && <p className="font-bold text-leaf-800">🔥 {combo} correct in a row</p>}
+            {result.note && <p className="font-bold text-sun-800">{result.note}</p>}
             {!good && (
               <p className="mt-1 font-bold text-coral-700">
                 Correct answer: <span className="font-extrabold">{result.correct_answer}</span>
               </p>
             )}
-            {!good && result.explanation && <p className="mt-1 text-sm text-coral-600">{result.explanation}</p>}
+            {!good && result.explanation && <p className="mt-1 text-sm text-coral-700">{result.explanation}</p>}
             {!good && result.requeued && !result.out_of_hearts && (
-              <p className="mt-1 text-xs font-bold uppercase tracking-wide text-coral-500">You'll see this one again</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-wide text-coral-700">You'll see this one again</p>
             )}
           </div>
         </div>
         {good && result.xp_earned > 0 && (
-          <span key={turn} aria-hidden className="pointer-events-none absolute right-10 top-0 animate-fly-up text-xl font-black text-sun-500 [--fly-x:0px] [--fly-y:-120px]">
+          <span key={turn} aria-hidden className="pointer-events-none absolute right-10 top-0 animate-fly-up text-xl font-black text-sun-800 [--fly-x:0px] [--fly-y:-120px]">
             +{result.xp_earned} XP
           </span>
         )}
@@ -90,7 +90,7 @@ export function FeedbackBar({ phase, ready, result, error, combo, turn, onCheck,
     <Bar tone="neutral">
       <div className="flex-1" aria-live="polite">
         {error && (
-          <p role="alert" className="text-sm font-bold text-coral-600">
+          <p role="alert" className="text-sm font-bold text-coral-700">
             {error.isNetwork ? "Connection lost." : error.message} Your answer is kept – press Check to try again.
           </p>
         )}

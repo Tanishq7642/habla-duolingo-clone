@@ -51,7 +51,7 @@ export function TypeAnswer({ exercise, value, onChange, locked, result }: Exerci
           "placeholder:font-semibold placeholder:text-ink-300",
           // Exactly one colour set applies, so utilities never fight over specificity.
           !result && "border-ink-200 bg-ink-50 focus:border-ocean-400 focus:bg-white",
-          result?.correct && "border-leaf-400 bg-leaf-50 text-leaf-700",
+          result?.correct && "border-leaf-400 bg-leaf-50 text-leaf-800",
           result && !result.correct && "animate-shake border-coral-400 bg-coral-50 text-coral-700",
         )}
       />

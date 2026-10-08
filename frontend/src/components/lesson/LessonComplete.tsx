@@ -28,9 +28,9 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
       <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center gap-6 px-5 pb-8 pt-10 text-center">
         <Mascot mood="cheer" size={140} className="animate-pop" />
         <div>
-          <h1 className="text-3xl font-black text-sun-500 sm:text-4xl">{title}</h1>
+          <h1 className="text-3xl font-black text-sun-800 sm:text-4xl">{title}</h1>
           {c.level.leveled_up && (
-            <p className="mt-2 animate-pop font-extrabold text-grape-600">⬆ You reached level {c.level.level}!</p>
+            <p className="mt-2 animate-pop font-extrabold text-grape-800">⬆ You reached level {c.level.level}!</p>
           )}
         </div>
 
@@ -49,7 +49,7 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
         </div>
 
         {c.xp.bonus > 0 && (
-          <p className="-mt-2 text-sm font-bold text-ink-400">
+          <p className="-mt-2 text-sm font-bold text-ink-500">
             {c.xp.base} XP from exercises + {c.xp.bonus} bonus{c.perfect && c.kind === "lesson" ? " (incl. perfect bonus)" : ""}
           </p>
         )}
@@ -65,7 +65,7 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
                 {c.daily_goal.xp_today}/{c.daily_goal.goal_xp} XP
               </span>
             </div>
-            {c.daily_goal.just_reached && <p className="mt-1 font-bold text-sun-600">Daily goal reached! 🎉</p>}
+            {c.daily_goal.just_reached && <p className="mt-1 font-bold text-sun-800">Daily goal reached! 🎉</p>}
           </Row>
           {c.skill && (
             <Row icon={c.skill.icon} title={c.skill.title} highlight={c.skill.just_completed}>
@@ -85,7 +85,7 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
           {c.unlocked_skill && (
             <div className="flex animate-pop items-center gap-3 rounded-2xl border-2 border-ocean-100 bg-ocean-50 p-4">
               <span className="text-3xl" aria-hidden>🔓</span>
-              <p className="font-extrabold text-ocean-700">
+              <p className="font-extrabold text-ocean-800">
                 New skill unlocked: {c.unlocked_skill.icon} {c.unlocked_skill.title}
               </p>
             </div>
@@ -94,7 +94,7 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
             <div key={a.code} className="flex animate-pop items-center gap-3 rounded-2xl border-2 border-grape-400/30 bg-grape-50 p-4">
               <span className="text-3xl" aria-hidden>{a.icon}</span>
               <div>
-                <p className="text-xs font-black uppercase tracking-wider text-grape-500">Achievement unlocked</p>
+                <p className="text-xs font-black uppercase tracking-wider text-grape-800">Achievement unlocked</p>
                 <p className="font-extrabold text-ink-900">{a.title}</p>
                 <p className="text-sm text-ink-500">{a.description}</p>
               </div>
@@ -130,7 +130,7 @@ const tileTones = {
 function StatTile({ label, tone, icon, children }: { label: string; tone: keyof typeof tileTones; icon: string; children: React.ReactNode }) {
   return (
     <div className={clsx("animate-pop overflow-hidden rounded-2xl border-2", tileTones[tone])}>
-      <p className="py-1 text-[11px] font-black uppercase tracking-wider text-white">{label}</p>
+      <p data-brand-surface className="py-1 text-[11px] font-black uppercase tracking-wider text-white">{label}</p>
       <p className="flex items-center justify-center gap-1.5 rounded-xl bg-white py-3 text-xl font-black text-ink-900">
         <span aria-hidden>{icon}</span>
         {children}

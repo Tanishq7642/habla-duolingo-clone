@@ -40,7 +40,7 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
   return (
     <div ref={ref} className="relative flex flex-col items-center" style={{ transform: `translateX(${offset}px)` }}>
       {isCurrent && !open && (
-        <span className="absolute -top-11 z-10 animate-float rounded-xl border-2 border-ink-200 bg-white px-3 py-1.5 text-sm font-black uppercase tracking-wide text-leaf-600 shadow-sm after:absolute after:-bottom-[7px] after:left-1/2 after:h-3 after:w-3 after:-translate-x-1/2 after:rotate-45 after:border-b-2 after:border-r-2 after:border-ink-200 after:bg-white">
+        <span className="absolute -top-11 z-10 animate-float rounded-xl border-2 border-ink-200 bg-white px-3 py-1.5 text-sm font-black uppercase tracking-wide text-leaf-800 shadow-sm after:absolute after:-bottom-[7px] after:left-1/2 after:h-3 after:w-3 after:-translate-x-1/2 after:rotate-45 after:border-b-2 after:border-r-2 after:border-ink-200 after:bg-white">
           {skill.status === "in_progress" ? "Continue" : "Start"}
         </span>
       )}
@@ -73,7 +73,7 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
         </button>
         {!locked && <CrownBadge level={skill.mastery} max={skill.mastery_cap} className="absolute -bottom-1 -right-1" />}
       </ProgressRing>
-      <p className={clsx("mt-1 text-sm font-extrabold", locked ? "text-ink-300" : "text-ink-700")}>{skill.title}</p>
+      <p className={clsx("mt-1 text-sm font-extrabold", locked ? "text-ink-500" : "text-ink-700")}>{skill.title}</p>
       {open && <SkillPopover skill={skill} theme={theme} />}
     </div>
   );
@@ -89,6 +89,7 @@ function SkillPopover({ skill, theme }: { skill: Skill; theme: string }) {
     <div
       role="dialog"
       aria-label={`${skill.title} details`}
+      data-brand-surface
       className={clsx(
         "absolute top-full z-20 mt-3 w-72 animate-pop rounded-3xl border-b-[6px] p-5 text-white shadow-xl",
         locked ? "border-ink-300 bg-ink-200 !text-ink-500" : completed ? "border-sun-600 bg-sun-500" : t.banner,
@@ -126,7 +127,7 @@ function SkillPopover({ skill, theme }: { skill: Skill; theme: string }) {
               href={`/lesson/${skill.next_lesson_id}`}
               variant="ghost"
               block
-              className={clsx("mt-4 !border-white", completed ? "!text-sun-600" : t.text)}
+              className={clsx("mt-4 !border-white", completed ? "!text-sun-800" : t.text)}
             >
               {completed ? (skill.mastery >= skill.mastery_cap ? "Review" : "Level up") : skill.status === "in_progress" ? "Continue" : "Start"}
             </ButtonLink>

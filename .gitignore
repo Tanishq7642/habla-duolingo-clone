@@ -11,3 +11,6 @@ frontend/next-env.d.ts
 .env
 .env.local
 coverage/
+frontend/test-results/
+frontend/playwright-report/
+.coverage

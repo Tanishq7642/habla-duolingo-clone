@@ -101,7 +101,7 @@ export function MatchPairs({ exercise, value, onChange, locked, result }: Exerci
         {column("left", left)}
         {column("right", right)}
       </div>
-      <p className="text-center text-sm font-bold text-ink-400" aria-live="polite">
+      <p className="text-center text-sm font-bold text-ink-500" aria-live="polite">
         {pairedCount} / {left.length} pairs matched
       </p>
     </div>

@@ -18,7 +18,7 @@ export function DailyGoalCard() {
   return (
     <Card
       title="Daily goal"
-      action={<Link href="/settings" className="text-sm font-extrabold uppercase text-ocean-500 hover:text-ocean-600">Edit</Link>}
+      action={<Link href="/settings" className="text-sm font-extrabold uppercase text-ocean-800 hover:text-ocean-600">Edit</Link>}
       className={clsx(reached && "border-sun-400 bg-sun-50")}
     >
       <div className="flex items-center gap-4">
@@ -36,7 +36,7 @@ export function DailyGoalCard() {
         </div>
       </div>
       {me.streak.at_risk && (
-        <p className="mt-4 rounded-2xl bg-flame-50 px-4 py-2 text-sm font-bold text-flame-600">
+        <p className="mt-4 rounded-2xl bg-flame-50 px-4 py-2 text-sm font-bold text-flame-800">
           🔥 Your {me.streak.current}-day streak ends at midnight – one lesson keeps it alive.
         </p>
       )}

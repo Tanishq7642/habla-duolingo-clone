@@ -94,7 +94,7 @@ export function LessonPlayer({ source }: { source: LessonSource }) {
         onExit={requestQuit}
       />
       {state.session && (
-        <p className="mx-auto mt-3 w-full max-w-4xl px-6 text-sm font-bold text-ink-400 sm:pl-[4.5rem]">
+        <p className="mx-auto mt-3 w-full max-w-4xl px-6 text-sm font-bold text-ink-500 sm:pl-[4.5rem]">
           {state.session.subtitle}
           {state.session.resumed && state.progress.completed > 0 && " · Resumed where you left off"}
         </p>

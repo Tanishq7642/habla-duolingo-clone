@@ -26,8 +26,8 @@ export function FillBlank({ exercise, value, onChange, locked, result }: Exercis
             className={clsx(
               "inline-flex min-w-[5.5rem] items-center justify-center rounded-xl border-b-4 px-3 py-1 transition",
               blankState === "empty" && "border-ink-300 bg-ink-50 text-transparent",
-              blankState === "filled" && "border-ocean-500 bg-ocean-50 text-ocean-700 animate-pop",
-              blankState === "correct" && "border-leaf-500 bg-leaf-50 text-leaf-700",
+              blankState === "filled" && "border-ocean-500 bg-ocean-50 text-ocean-800 animate-pop",
+              blankState === "correct" && "border-leaf-500 bg-leaf-50 text-leaf-800",
               blankState === "wrong" && "border-coral-500 bg-coral-50 text-coral-700 animate-shake",
             )}
           >

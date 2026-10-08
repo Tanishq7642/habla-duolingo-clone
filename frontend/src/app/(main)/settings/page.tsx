@@ -104,7 +104,7 @@ export default function SettingsPage() {
       </section>
 
       {update.error && (
-        <p role="alert" className="mt-6 font-bold text-coral-600">
+        <p role="alert" className="mt-6 font-bold text-coral-700">
           {update.error instanceof ApiError ? update.error.message : "Couldn't save settings."}
         </p>
       )}

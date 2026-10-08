@@ -20,7 +20,7 @@ export function StatsGrid({ stats }: { stats: Stats }) {
           <li key={s.label} className="flex items-center gap-3 rounded-2xl border-2 border-ink-100 p-4">
             <span className="text-3xl" aria-hidden>{s.icon}</span>
             <div className="flex min-w-0 flex-col-reverse">
-              <p className="truncate text-xs font-bold text-ink-400">{s.label}</p>
+              <p className="truncate text-xs font-bold text-ink-500">{s.label}</p>
               <p className="text-xl font-black tabular-nums">{s.value}</p>
             </div>
           </li>

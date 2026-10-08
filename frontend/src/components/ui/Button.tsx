@@ -11,7 +11,7 @@ const variants: Record<Variant, string> = {
   danger: "bg-coral-500 text-white border-coral-700 hover:bg-coral-400",
   sun: "bg-sun-500 text-white border-sun-600 hover:bg-sun-400",
   ghost: "bg-white text-ink-700 border-ink-200 hover:bg-ink-50",
-  plain: "bg-transparent text-ocean-600 border-transparent hover:bg-ocean-50 !border-b-0",
+  plain: "bg-transparent text-ocean-800 border-transparent hover:bg-ocean-50 !border-b-0",
 };
 
 const sizes: Record<Size, string> = {
@@ -33,6 +33,14 @@ const BASE = clsx(
   "active:translate-y-[3px] active:border-b-2",
 );
 
+/**
+ * Filled variants use Duolingo's white-on-brand-colour look, which is below
+ * WCAG AA contrast (as in Duolingo itself). They're tagged `data-brand-surface`
+ * so the accessibility test exempts exactly these and nothing else.
+ */
+const BRAND_FILLED: Variant[] = ["primary", "secondary", "danger", "sun"];
+const brandSurface = (variant: Variant) => (BRAND_FILLED.includes(variant) ? { "data-brand-surface": true } : {});
+
 export function buttonClasses(variant: Variant = "primary", size: Size = "md", block?: boolean, className?: string) {
   return clsx(BASE, variants[variant], sizes[size], block && "w-full", className);
 }
@@ -47,6 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
+      {...brandSurface(variant)}
       className={buttonClasses(
         variant,
         size,
@@ -74,7 +83,7 @@ export function ButtonLink({
   ...rest
 }: LinkProps & { variant?: Variant; size?: Size; block?: boolean; className?: string; children: ReactNode }) {
   return (
-    <Link href={href} className={buttonClasses(variant, size, block, className)} {...rest}>
+    <Link href={href} className={buttonClasses(variant, size, block, className)} {...brandSurface(variant ?? "primary")} {...rest}>
       {children}
     </Link>
   );
