@@ -21,7 +21,7 @@ export function DailyGoalCard() {
       action={<Link href="/settings" className="text-base font-extrabold uppercase text-ocean-500 hover:text-ocean-400">Edit</Link>}
     >
       <div className="flex items-center gap-4">
-        <Mascot size={76} mood={reached ? "cheer" : "happy"} className={clsx(reached && "animate-float")} />
+        <Mascot size={76} mood={reached ? "cheer" : "happy"} interactive />
         <div className="flex-1">
           <p className="text-[1.1rem] font-extrabold text-ink-700">
             {reached ? "Goal reached – nicely done! 🎉" : `Earn ${goal_xp - xp_today} more XP today`}

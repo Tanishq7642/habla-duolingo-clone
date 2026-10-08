@@ -8,6 +8,7 @@ import { CrownBadge } from "@/components/ui/Crown";
 import { ProgressRing } from "@/components/ui/Progress";
 import type { SkillNode as Skill } from "@/lib/types";
 import { rem } from "@/lib/units";
+import { Mascot } from "@/components/ui/Mascot";
 
 import { themeFor } from "./theme";
 
@@ -40,6 +41,12 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
 
   return (
     <div ref={ref} className="relative flex flex-col items-center" style={{ transform: `translateX(${rem(offset)})` }}>
+      {isCurrent && (
+        // Pip keeps you company next to your current lesson, on the side with more room.
+        <div className={clsx("absolute top-1/2 hidden -translate-y-1/2 sm:block", offset >= 0 ? "right-full mr-10" : "left-full ml-10")}>
+          <Mascot size={104} interactive />
+        </div>
+      )}
       {isCurrent && !open && (
         <span className="absolute -top-11 z-10 animate-float rounded-xl border-2 border-ink-200 bg-surface px-3 py-1.5 text-sm font-black uppercase tracking-wide text-leaf-800 shadow-sm after:absolute after:-bottom-[7px] after:left-1/2 after:h-3 after:w-3 after:-translate-x-1/2 after:rotate-45 after:border-b-2 after:border-r-2 after:border-ink-200 after:bg-surface">
           {skill.status === "in_progress" ? "Continue" : "Start"}

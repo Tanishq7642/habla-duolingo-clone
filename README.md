@@ -6,7 +6,7 @@ gamification (hearts, XP, streaks, daily goals, mastery, achievements, leaderboa
 
 **Live demo:** https://habla-web-one.vercel.app (API: https://habla-api-cyan.vercel.app/docs)
 
-Everything visual is original: the mascot **Pip** is hand-written SVG, sounds are synthesised
+Everything visual is original: the mascot **Pip** is hand-written SVG animated with CSS (breathing, blinking, waving; its eyes follow your pointer), sounds are synthesised
 with Web Audio, and there are no third-party image or audio assets.
 
 > * Design notes (ER model, state machine, API contract, gamification flow): [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)

@@ -77,7 +77,7 @@ export function LearningPath() {
         </section>
       ))}
       <div className="flex flex-col items-center gap-2 pt-4 text-center">
-        <Mascot mood="think" size={90} />
+        <Mascot mood="think" size={90} interactive />
         <p className="font-extrabold text-ink-500">More units are on the way!</p>
       </div>
       {current !== null && <JumpToCurrent targetId={`skill-${current}`} />}
@@ -92,7 +92,7 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
     // Pinned while this unit's skills scroll by (like Duolingo). Each <section> bounds its own
     // sticky banner, so the next unit's banner pushes this one away. The phone offset clears the
     // sticky stats header; the background hides path nodes scrolling underneath.
-    <div className="sticky top-[calc(3.5rem+2px)] z-30 -mx-1 bg-surface px-1 pt-2 xl:top-0 xl:pt-6">
+    <div className="sticky top-[calc(3.5rem+2px)] z-30 bg-surface pt-2 xl:top-0 xl:pt-6">
       <header className={clsx("flex items-center justify-between gap-4 rounded-2xl px-5 py-4 text-white", t.banner)}>
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-[1.05rem] font-extrabold uppercase tracking-[0.03em] text-white/80">

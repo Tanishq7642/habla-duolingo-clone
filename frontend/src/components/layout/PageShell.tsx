@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import type { ReactNode } from "react";
 
+import { RailFooter } from "./RailFooter";
 import { StickyRail } from "./StickyRail";
 import { TopStats } from "./TopStats";
 
@@ -23,7 +24,10 @@ export function PageShell({ children, rail, narrow }: { children: ReactNode; rai
           <div className="bg-surface pb-4 pt-6">
             <TopStats size="lg" />
           </div>
-          <div className="space-y-6">{rail}</div>
+          <div className="space-y-6">
+            {rail}
+            <RailFooter />
+          </div>
         </StickyRail>
       )}
     </div>
