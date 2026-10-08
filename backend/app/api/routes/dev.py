@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+import hmac
+
+from fastapi import APIRouter, Header
 from pydantic import BaseModel, Field
 
 from app.api.deps import DB, CurrentUser, Now, Rules
@@ -14,6 +16,11 @@ class TimeTravelIn(BaseModel):
     days: int = Field(default=1, ge=1, le=30)
 
 
+class ResetIn(BaseModel):
+    # The browser's IANA timezone, so the reseeded history matches the viewer's calendar.
+    timezone: str | None = Field(default=None, max_length=64)
+
+
 def _ensure_enabled() -> None:
     if not get_settings().enable_dev_tools:
         raise Forbidden("Demo tools are disabled on this server.", code="dev_tools_disabled")
@@ -26,10 +33,23 @@ def time_travel(payload: TimeTravelIn, db: DB, user: CurrentUser, now: Now, rule
     return dev_service.time_travel(db, user, payload.days, now, rules)
 
 
+@router.get("/cron/daily-reset", status_code=204)
+def daily_reset(db: DB, authorization: str | None = Header(default=None)):
+    """Scheduled job (Vercel Cron, daily): re-seed so the demo's relative dates
+    ("practised yesterday, streak at risk today") stay true every day.
+    Only callable with the cron secret."""
+    secret = get_settings().cron_secret
+    if not secret or not authorization or not hmac.compare_digest(authorization, f"Bearer {secret}"):
+        raise Forbidden("This endpoint is reserved for the scheduler.", code="cron_forbidden")
+    bind = db.get_bind()
+    db.close()
+    dev_service.reset_demo(bind)
+
+
 @router.post("/reset", status_code=204)
-def reset(db: DB):
+def reset(db: DB, payload: ResetIn | None = None):
     """Restore the seeded demo course and learner."""
     _ensure_enabled()
     bind = db.get_bind()
     db.close()  # release our connection before tables are dropped
-    dev_service.reset_demo(bind)
+    dev_service.reset_demo(bind, payload.timezone if payload else None)

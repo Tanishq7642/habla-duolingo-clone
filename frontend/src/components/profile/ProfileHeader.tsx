@@ -19,7 +19,13 @@ export function ProfileHeader({ learner }: { learner: Learner }) {
         </span>
       </div>
       <div className="w-full flex-1">
-        <h1 className="text-3xl font-black">{learner.display_name}</h1>
+        <h1 className="flex flex-wrap items-center justify-center gap-2 text-3xl font-black sm:justify-start">
+          {learner.display_name}
+          <span className="rounded-lg bg-ocean-50 px-2 py-0.5 text-xs font-black uppercase tracking-wide text-ocean-800">
+            Demo learner
+          </span>
+        </h1>
+        <p className="mt-1 text-sm text-ink-500">The seeded default account. Sign-in is simplified, as the brief allows.</p>
         <p className="font-bold text-ink-500">
           @{learner.username} · Joined {joined}
           {learner.course && <> · {learner.course.language}</>}

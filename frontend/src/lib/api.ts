@@ -87,5 +87,6 @@ export const api = {
 
   // Demo tools (simulate days passing / reset the seeded learner)
   timeTravel: (days: number) => post<Learner>("/dev/time-travel", { days }),
-  resetDemo: () => request<void>("/dev/reset", { method: "POST" }),
+  // Sends the browser's timezone so the reseeded history ("practised yesterday") matches the viewer's calendar.
+  resetDemo: () => post<void>("/dev/reset", { timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
 };

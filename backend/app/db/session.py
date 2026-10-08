@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
+from app.core import timing
 from app.core.config import get_settings
 
 
@@ -23,6 +24,7 @@ def make_engine(url: str, echo: bool = False) -> Engine:
         # Hosted Postgres (e.g. Neon) drops idle connections; check before use.
         pool_pre_ping=not is_sqlite,
     )
+    timing.instrument(engine)
     if is_sqlite:
 
         @event.listens_for(engine, "connect")

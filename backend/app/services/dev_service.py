@@ -36,7 +36,21 @@ def time_travel(db: Session, user: User, days: int, now: datetime, rules: GameRu
     return learner_service.learner_view(db, user, now, rules)
 
 
-def reset_demo(engine: Engine) -> None:
+def current_demo_timezone(engine: Engine) -> str:
+    """The demo learner's timezone as last synced by a browser (UTC if unknown)."""
+    from app.core.config import get_settings
+
+    try:
+        with Session(engine) as db:
+            tz = db.scalar(select(User.timezone).where(User.username == get_settings().demo_username))
+    except Exception:  # empty / broken database: fall back
+        tz = None
+    return tz or "UTC"
+
+
+def reset_demo(engine: Engine, tz: str | None = None) -> None:
+    """Re-seed the demo. Keeps the learner's timezone unless one is given, so
+    "practised yesterday" stays true on *their* calendar after the reset."""
     from app.seed import seed  # local import: seeding pulls in the whole content module
 
-    seed.run(engine)
+    seed.run(engine, tz=tz or current_demo_timezone(engine))

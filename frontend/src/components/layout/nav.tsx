@@ -4,6 +4,8 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { DemoLearnerCard } from "./DemoLearnerCard";
+
 // Same sections as Duolingo's web sidebar. `mobile: false` items live elsewhere on phones
 // (Settings is reachable from the Profile header) to keep the tab bar at 5 targets.
 const NAV = [
@@ -54,6 +56,7 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <DemoLearnerCard />
     </aside>
   );
 }

@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     enable_dev_tools: bool = True
     # Seed the demo course automatically when the database is empty (fresh deploys).
     auto_seed: bool = True
+    # Shared secret for scheduled jobs. Vercel Cron sends `Authorization: Bearer <CRON_SECRET>`.
+    cron_secret: str | None = Field(default=None, validation_alias=AliasChoices("HABLA_CRON_SECRET", "CRON_SECRET"))
 
     rules: GameRules = GameRules()
 

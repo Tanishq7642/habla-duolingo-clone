@@ -1,7 +1,7 @@
 """Read access to course content."""
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.models import Course, Exercise, Lesson, Skill, Unit
 
@@ -16,6 +16,12 @@ def get_course_tree(db: Session, course_id: int) -> Course | None:
             selectinload(Course.units).selectinload(Unit.skills).selectinload(Skill.lessons),
         )
     )
+    return db.scalars(stmt).first()
+
+
+def get_course_header(db: Session, course_id: int) -> Course | None:
+    """Course + its language in one query (no units/skills): for headers and HUDs."""
+    stmt = select(Course).where(Course.id == course_id).options(joinedload(Course.learning_language))
     return db.scalars(stmt).first()
 
 

@@ -9,6 +9,7 @@ from app.core.clock import is_valid_timezone, local_today
 from app.core.config import GameRules
 from app.core.errors import Conflict, DomainError, PaymentRequired
 from app.models import User
+from app.repositories import content as content_repo
 from app.repositories import progress as progress_repo
 from app.schemas.learner import (
     ActivityOut,
@@ -47,7 +48,8 @@ def learner_view(db: Session, user: User, now: datetime, rules: GameRules) -> Le
 
     course = None
     if user.active_course_id is not None:
-        course = path_service.course_ref(path_service.active_course(db, user))
+        header = content_repo.get_course_header(db, user.active_course_id)  # 1 query, not the whole tree
+        course = path_service.course_ref(header) if header else None
 
     lvl = level_for_xp(user.total_xp)
     return LearnerOut(

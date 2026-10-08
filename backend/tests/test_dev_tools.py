@@ -39,3 +39,64 @@ def test_ensure_seeded_only_seeds_an_empty_database(engine):
     from app.seed.seed import ensure_seeded
 
     assert ensure_seeded(engine) is False  # already seeded by the fixture: left untouched
+
+
+def test_ensure_seeded_seeds_a_brand_new_database():
+    from sqlalchemy import create_engine
+    from sqlalchemy.pool import StaticPool
+
+    from app.seed.seed import ensure_seeded
+
+    fresh = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    assert ensure_seeded(fresh) is True   # no tables yet: seeds
+    assert ensure_seeded(fresh) is False  # second boot: one query, no reseed
+    fresh.dispose()
+
+
+def test_daily_reset_requires_the_cron_secret(client, monkeypatch):
+    from app.core.config import get_settings
+
+    monkeypatch.setattr(get_settings(), "cron_secret", "s3cret")
+    assert client.get("/api/dev/cron/daily-reset").status_code == 403
+    assert client.get("/api/dev/cron/daily-reset", headers={"Authorization": "Bearer wrong"}).status_code == 403
+    client.post("/api/dev/time-travel", json={"days": 1})
+    ok = client.get("/api/dev/cron/daily-reset", headers={"Authorization": "Bearer s3cret"})
+    assert ok.status_code == 204
+    assert client.get("/api/me").json()["streak"]["current"] == 4  # demo story restored
+
+
+def test_daily_reset_disabled_without_a_configured_secret(client):
+    assert client.get("/api/dev/cron/daily-reset", headers={"Authorization": "Bearer "}).status_code == 403
+
+
+def test_demo_story_holds_in_the_learners_timezone():
+    """Regression: at 20:00 UTC it's already tomorrow in India (UTC+5:30). A demo
+    seeded on UTC dates showed a *broken* streak there; seeding on the
+    learner's calendar keeps "practised yesterday, streak at risk today"."""
+    from datetime import datetime, timezone
+
+    from sqlalchemy import create_engine, select
+    from sqlalchemy.orm import Session
+    from sqlalchemy.pool import StaticPool
+
+    from app.core.config import get_settings
+    from app.models import User
+    from app.seed.seed import run
+    from app.services.learner_service import learner_view
+
+    evening_utc = datetime(2026, 3, 10, 20, 0, tzinfo=timezone.utc)
+    eng = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    for tz in ("Asia/Kolkata", "America/Los_Angeles", "UTC"):
+        run(eng, now=evening_utc, tz=tz)
+        with Session(eng) as db:
+            alex = db.scalar(select(User).where(User.username == "demo"))
+            streak = learner_view(db, alex, evening_utc, get_settings().rules).streak
+        assert (streak.current, streak.at_risk) == (4, True), tz
+    eng.dispose()
+
+
+def test_reset_accepts_the_viewers_timezone(client):
+    assert client.post("/api/dev/reset", json={"timezone": "Asia/Kolkata"}).status_code == 204
+    assert client.get("/api/me").json()["timezone"] == "Asia/Kolkata"
+    assert client.post("/api/dev/reset").status_code == 204  # no body: keeps the current timezone
+    assert client.get("/api/me").json()["timezone"] == "Asia/Kolkata"

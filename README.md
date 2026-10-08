@@ -37,7 +37,7 @@ npm run dev                                           # http://localhost:3000
 The frontend proxies `/api/*` to the backend (see `next.config.ts`), so there's no CORS setup and
 no frontend env var needed for local work.
 
-**Demo credentials:** none needed. Every request without an `X-User-Id` header acts as the seeded
+**Demo credentials:** none needed. The UI labels this as the shared *Demo learner*. Every request without an `X-User-Id` header acts as the seeded
 learner **Alex (`demo`)**. Seeded state: Greetings completed, Food half-done, a 4-day streak
 that's *at risk today*, 4/5 hearts, 535 gems, rank #5 this week. That way the first lesson you
 finish visibly extends the streak, hits the daily goal and unlocks the next skill.
@@ -378,6 +378,13 @@ shows "Can't reach Habla" with a retry button meanwhile. Their disk is ephemeral
 data resets on restart (and re-seeds automatically).
 
 ## Assumptions & trade-offs
+
+* **One shared demo learner (no sign-in)**, as the brief allows. The hosted demo re-seeds every night
+  (Vercel Cron → `GET /api/dev/cron/daily-reset`, protected by `CRON_SECRET`) so its date-relative story
+  ("practised yesterday, streak at risk today") stays true. The seed is laid out on the learner's own
+  timezone; *Reset demo* sends the browser's timezone.
+* **Observability:** every API response carries a `Server-Timing` header (`app;dur=…, db;dur=…;desc="N queries"`),
+  visible in the browser's Network tab.
 
 * **Single demo identity** rather than auth flows, as the brief said not to over-engineer authentication.
 * **XP is credited at completion only.** Abandoning a lesson forfeits its XP (but practice history

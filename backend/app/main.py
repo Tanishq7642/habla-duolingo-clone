@@ -1,3 +1,4 @@
+import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
@@ -6,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.routes import dev, leaderboard, me, path, sessions
+from app.core import timing
 from app.core.config import get_settings
 from app.core.errors import DomainError
 
@@ -38,6 +40,14 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    @app.middleware("http")
+    async def server_timing(request: Request, call_next):
+        stats = timing.start_request()
+        started = time.perf_counter()
+        response = await call_next(request)
+        response.headers["Server-Timing"] = timing.header(stats, time.perf_counter() - started)
+        return response
 
     @app.exception_handler(DomainError)
     async def domain_error_handler(_: Request, exc: DomainError):

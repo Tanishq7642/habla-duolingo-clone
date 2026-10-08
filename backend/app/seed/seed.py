@@ -12,9 +12,11 @@ obey exactly the same rules as live play.
 import random
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import Engine, func, inspect, select, text
+from sqlalchemy import Engine, func, select, text
+from sqlalchemy.exc import OperationalError, ProgrammingError
 from sqlalchemy.orm import Session
 
+from app.core.clock import is_valid_timezone, local_today
 from app.core.config import GameRules, get_settings
 from app.db.base import Base
 from app.models import (
@@ -81,8 +83,8 @@ def seed_content(db: Session) -> Course:
     return course
 
 
-def seed_rivals(db: Session, course: Course, now: datetime, rng: random.Random) -> None:
-    today = now.date()
+def seed_rivals(db: Session, course: Course, now: datetime, rng: random.Random, tz: str) -> None:
+    today = local_today(now, tz)  # same calendar as the demo learner, so "this week" lines up
     for username, name, color in RIVALS:
         user = User(username=username, display_name=name, avatar_color=color, is_bot=True,
                     active_course_id=course.id, gems=rng.randint(100, 900), created_at=now - timedelta(days=90))
@@ -151,9 +153,11 @@ def play_lesson(db: Session, user: User, lesson: Lesson, wrong_positions: list[i
     session_service.complete(db, user, session.attempt_id, now, rules)
 
 
-def seed_demo(db: Session, course: Course, now: datetime, rules: GameRules) -> User:
+def seed_demo(db: Session, course: Course, now: datetime, rules: GameRules, tz: str) -> User:
+    """The demo history is relative to *the learner's* calendar: "practised
+    yesterday, streak at risk today" must hold in their timezone, not UTC."""
     demo = User(username=get_settings().demo_username, display_name="Alex", avatar_color="#58CC02",
-                timezone="UTC", active_course_id=course.id, hearts=rules.max_hearts,
+                timezone=tz, active_course_id=course.id, hearts=rules.max_hearts,
                 gems=DEMO_START_GEMS, daily_goal_xp=20, created_at=now - timedelta(days=30))
     db.add(demo)
     db.commit()
@@ -167,36 +171,48 @@ def seed_demo(db: Session, course: Course, now: datetime, rules: GameRules) -> U
     return demo
 
 
-def run(engine: Engine, now: datetime | None = None) -> None:
+def run(engine: Engine, now: datetime | None = None, tz: str = "UTC") -> None:
+    """Rebuild the database. `tz` is the demo learner's timezone: their seeded
+    history is laid out on that calendar."""
     now = now or datetime.now(timezone.utc)
+    tz = tz if is_valid_timezone(tz) else "UTC"
     rules = get_settings().rules
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
     with Session(engine, expire_on_commit=False) as db:
         course = seed_content(db)
-        seed_rivals(db, course, now, random.Random(42))
+        seed_rivals(db, course, now, random.Random(42), tz)
         db.commit()
-        seed_demo(db, course, now, rules)
+        seed_demo(db, course, now, rules, tz)
+
+
+def _has_learners(engine: Engine) -> bool:
+    """One cheap query; False if the table doesn't exist yet."""
+    try:
+        with Session(engine) as db:
+            return bool(db.scalar(select(func.count(User.id))))
+    except (OperationalError, ProgrammingError):  # fresh database: no tables yet
+        return False
 
 
 def ensure_seeded(engine: Engine) -> bool:
     """Seed only if the database has no learners yet. Returns True if it seeded.
 
-    Hosting platforms often start with an empty disk, so the API seeds itself
-    on first boot instead of requiring a manual step.
+    Runs on every server cold start, so the common case (already seeded) is a
+    single query with no locking. Only an empty database takes the slow path,
+    where a Postgres advisory lock makes sure exactly one of several
+    simultaneously-booting serverless instances seeds it.
     """
+    if _has_learners(engine):
+        return False
     with engine.connect() as lock_conn:
-        # Serverless platforms may boot several instances at once on a fresh
-        # database; a Postgres advisory lock lets exactly one of them seed.
         is_pg = engine.dialect.name == "postgresql"
         if is_pg:
             lock_conn.execute(text("SELECT pg_advisory_lock(:k)"), {"k": SEED_LOCK_KEY})
             lock_conn.commit()
         try:
-            if inspect(engine).has_table("users"):
-                with Session(engine) as db:
-                    if db.scalar(select(func.count(User.id))):
-                        return False
+            if _has_learners(engine):  # another instance seeded while we waited
+                return False
             run(engine)
             return True
         finally:

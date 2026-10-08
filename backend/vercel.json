@@ -13,5 +13,11 @@
         "service": "web"
       }
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/dev/cron/daily-reset",
+      "schedule": "0 0 * * *"
+    }
   ]
 }
