@@ -19,7 +19,8 @@ const NAV = [
 
 function useIsActive() {
   const pathname = usePathname();
-  return (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  // The units overview (/sections) belongs to Learn, as in Duolingo.
+  return (href: string) => (href === "/" ? pathname === "/" || pathname.startsWith("/sections") : pathname.startsWith(href));
 }
 
 export function Logo() {

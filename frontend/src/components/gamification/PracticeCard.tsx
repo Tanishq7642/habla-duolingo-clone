@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { usePracticeSummary } from "@/lib/queries";
 
 import { Card } from "./Card";
+import { PracticeIcon } from "./PracticeIcon";
 
 /** Smart practice: surfaces exercises the learner keeps missing. */
 export function PracticeCard() {
@@ -14,9 +15,9 @@ export function PracticeCard() {
 
   const weak = data.weak_exercises;
   return (
-    <Card title="Smart practice" className="border-grape-400/30 bg-grape-50/60">
-      <div className="flex gap-3">
-        <span className="text-5xl" aria-hidden>💪</span>
+    <Card title="Smart practice">
+      <div className="flex items-center gap-4">
+        <PracticeIcon className="h-16 w-16 shrink-0" />
         <p className="text-base font-semibold text-ink-700">
           {!data.available
             ? data.reason
@@ -26,7 +27,7 @@ export function PracticeCard() {
         </p>
       </div>
       {data.available && (
-        <ButtonLink href="/practice" variant="ghost" block className="mt-4 !text-grape-800">
+        <ButtonLink href="/practice" variant="ghost" block className="mt-5 !text-ocean-500">
           {weak > 0 ? "Practise weak areas" : "Practise"}
         </ButtonLink>
       )}

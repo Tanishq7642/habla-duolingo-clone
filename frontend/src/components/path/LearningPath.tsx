@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -11,6 +12,7 @@ import type { LearningPath as Path, UnitNode } from "@/lib/types";
 import { rem } from "@/lib/units";
 
 import { GuidebookIcon } from "./GuidebookIcon";
+import { JumpToCurrent } from "./JumpToCurrent";
 import { GuidebookModal } from "./GuidebookModal";
 import { SkillNode } from "./SkillNode";
 import { TRAIL_OFFSETS, themeFor } from "./theme";
@@ -53,13 +55,13 @@ export function LearningPath() {
   return (
     <div className="flex flex-col gap-10 pb-10">
       {data.units.map((unit) => (
-        <section key={unit.id} aria-labelledby={`unit-${unit.id}`}>
+        <section key={unit.id} id={`unit-section-${unit.id}`} aria-labelledby={`unit-${unit.id}`} className="scroll-mt-16">
           <UnitBanner unit={unit} />
           <ol className="relative mt-16 flex flex-col items-center gap-16">
             {unit.skills.map((skill) => {
               const offset = TRAIL_OFFSETS[index++ % TRAIL_OFFSETS.length];
               return (
-                <li key={skill.id} data-skill-node className={clsx("relative", openSkill === skill.id && "z-20")}>
+                <li key={skill.id} id={`skill-${skill.id}`} data-skill-node className={clsx("relative", openSkill === skill.id && "z-20")}>
                   <SkillNode
                     skill={skill}
                     theme={unit.theme}
@@ -78,6 +80,7 @@ export function LearningPath() {
         <Mascot mood="think" size={90} />
         <p className="font-extrabold text-ink-500">More units are on the way!</p>
       </div>
+      {current !== null && <JumpToCurrent targetId={`skill-${current}`} />}
     </div>
   );
 }
@@ -92,7 +95,15 @@ function UnitBanner({ unit }: { unit: UnitNode }) {
     <div className="sticky top-[calc(3.5rem+2px)] z-30 -mx-1 bg-surface px-1 pt-2 xl:top-0 xl:pt-6">
       <header className={clsx("flex items-center justify-between gap-4 rounded-2xl px-5 py-4 text-white", t.banner)}>
         <div className="min-w-0">
-          <p className="text-[0.8rem] font-black uppercase tracking-[0.12em] opacity-80">Unit {unit.position}</p>
+          <p className="flex items-center gap-2 text-[0.8rem] font-black uppercase tracking-[0.12em] opacity-80">
+            {/* Like Duolingo's "← SECTION 1, UNIT 1": back to the overview of all units */}
+            <Link href="/sections" aria-label="All units" className="-ml-1 rounded-lg p-0.5 transition hover:bg-white/15">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
+                <path d="M19 12H5M11.5 5.5 5 12l6.5 6.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+            Unit {unit.position}
+          </p>
           <h2 id={`unit-${unit.id}`} className="text-[1.45rem] font-black leading-tight">{unit.title}</h2>
           <p className="mt-0.5 font-semibold opacity-90">{unit.description}</p>
         </div>

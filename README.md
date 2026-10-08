@@ -58,7 +58,7 @@ cd frontend && npm run typecheck && npm run build
 
 | Area | What it does |
 |---|---|
-| **Learning path** | Units → skills rendered as a winding trail from backend data. Skill nodes show locked / available / in-progress / completed, a progress ring, and a **crown level (0–5)**. Popover lists lessons and starts the next one. Unit banners stay pinned while you scroll their skills, with a **Guidebook** listing each skill and lesson. |
+| **Learning path** | Units → skills rendered as a winding trail from backend data. Skill nodes show locked / available / in-progress / completed, a progress ring, and a **crown level (0–5)**. Popover lists lessons and starts the next one. Unit banners stay pinned while you scroll their skills, with a **Guidebook** listing each skill and lesson. A floating arrow button jumps back to your current lesson, and the ← in each unit bar opens a units overview (`/sections`). |
 | **Lesson engine** | 5 exercise types (multiple choice with pictures, fill-in-the-blank, word bank, match pairs, typed answer) plugged in via a registry. Missed exercises come back at the end. Refreshing mid-lesson resumes exactly where you were. |
 | **Feedback** | Bottom action bar: Check → correct (praise, combo, flying +XP) or incorrect (shake, correct answer, explanation). Enter and number keys work throughout. **Skip** (bottom-left) counts as a miss and the exercise comes back. The completion screen shows XP, accuracy and time tiles. |
 | **Hearts** | −1 per mistake in lessons, persisted immediately. At zero: refill with gems, earn one through practice, or end the lesson. |

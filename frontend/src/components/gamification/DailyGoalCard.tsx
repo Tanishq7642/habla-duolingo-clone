@@ -18,8 +18,7 @@ export function DailyGoalCard() {
   return (
     <Card
       title="Daily goal"
-      action={<Link href="/settings" className="text-base font-extrabold uppercase text-ocean-800 hover:text-ocean-600">Edit</Link>}
-      className={clsx(reached && "border-sun-400 bg-sun-50")}
+      action={<Link href="/settings" className="text-base font-extrabold uppercase text-ocean-500 hover:text-ocean-400">Edit</Link>}
     >
       <div className="flex items-center gap-4">
         <Mascot size={76} mood={reached ? "cheer" : "happy"} className={clsx(reached && "animate-float")} />
