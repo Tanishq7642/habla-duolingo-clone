@@ -1,0 +1,8 @@
+tests/
+*.db
+*.db-*
+.pytest_cache/
+__pycache__/
+Procfile
+pytest.ini
+requirements-dev.txt

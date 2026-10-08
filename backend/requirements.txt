@@ -4,3 +4,5 @@ sqlalchemy>=2.0
 pydantic>=2.7
 pydantic-settings>=2.3
 tzdata>=2024.1
+# Postgres driver: only used when DATABASE_URL points at Postgres (hosted demo)
+psycopg[binary]>=3.2

@@ -323,41 +323,49 @@ returns. Unit themes and flags are data-keyed.
 
 ## Deployment
 
-### Option A (recommended, free): Hugging Face Spaces, one container
+### Option A (recommended, free, no card): Vercel + Neon Postgres
 
-The root [`Dockerfile`](Dockerfile) builds **frontend and backend into one image**: Next.js serves
-the public port 7860 and proxies `/api` to FastAPI on `127.0.0.1:8000` inside the container
-([`deploy/start.sh`](deploy/start.sh)). One free host, one URL, no card, and it only sleeps after
-~48 h without visitors.
+Two Vercel projects from this one repo, plus Vercel's free Neon Postgres integration:
+
+| Vercel project | Root directory | What Vercel does |
+|---|---|---|
+| `habla-api` | `backend` | Detects FastAPI (`app/main.py`) and runs it as a Python function |
+| `habla-web` | `frontend` | Builds Next.js; `/api/*` is proxied to `habla-api` |
+
+1. **API:** import the repo, set root directory `backend`. In the project's **Storage** tab, create a
+   **Neon** Postgres database and connect it. That injects `DATABASE_URL`. Deploy; the API seeds the
+   empty database on first boot (an advisory lock makes this safe if several instances start at once).
+2. **Web:** import the repo again, set root directory `frontend`, and add
+   `HABLA_API_ORIGIN=https://<habla-api-domain>` *before* deploying (Next bakes rewrites in at build time).
+
+**Why Postgres in the hosted demo when the project uses SQLite?** Serverless functions have no
+persistent disk, so a SQLite file would reset on every cold start and differ between instances. The
+code is unchanged: SQLAlchemy plus one environment variable. The whole backend suite runs green on both
+engines (`HABLA_TEST_DATABASE_URL=postgresql+psycopg://… pytest`), and the E2E suite passes against a
+Postgres-backed stack. psycopg's server-side prepared statements are disabled so Neon's pooled
+(PgBouncer) URL works.
+
+### Option B: one Docker container (any Docker host)
+
+The root [`Dockerfile`](Dockerfile) builds frontend **and** backend into one image: Next.js on port 7860
+proxies `/api` to FastAPI on `127.0.0.1:8000` ([`deploy/start.sh`](deploy/start.sh)), with SQLite inside
+the container.
 
 ```bash
-pip install huggingface_hub
-hf auth login                          # paste a *write* token from huggingface.co/settings/tokens
-python deploy/push_to_hf.py            # creates a private Docker Space and uploads the repo
-python deploy/push_to_hf.py --public   # when you're ready to share the link
+docker build -t habla . && docker run -p 7860:7860 habla     # http://localhost:7860
 ```
 
-The build takes ~5 minutes; the app is then at `https://<user>-habla-duolingo-clone.hf.space`.
-The same image runs anywhere: `docker build -t habla . && docker run -p 7860:7860 habla`.
+### Option C: Render (API) + Vercel (web)
 
-### Option B: Render (API) + Vercel (web)
-
-**Backend → Render** (or Railway via `backend/Procfile`). The repo's [`render.yaml`](render.yaml) is a
-Blueprint: New → Blueprint → pick the repo. Choose the *Free* instance type. If the Blueprint flow asks for a
-card, create a plain *Web Service* instead (root `backend`, start
-`uvicorn app.main:app --host 0.0.0.0 --port $PORT`). On first boot with an empty database the API
-**seeds itself** (`HABLA_AUTO_SEED=true`). Health check: `/api/health`.
-
-**Frontend → Vercel.** Import the repo with root directory **`frontend`** and set
-`HABLA_API_ORIGIN=https://<your-render-service>.onrender.com` *before* the first build (Next bakes
-rewrites in at build time). The browser only talks to the Vercel origin, and Vercel proxies `/api/*`
-to Render, so CORS isn't involved.
+[`render.yaml`](render.yaml) is a Render Blueprint for the API (SQLite on the instance disk, re-seeded on
+restart). Choose the *Free* instance type, or create a plain *Web Service* with root `backend` and start
+command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Then deploy the frontend to Vercel as above.
 
 Environment variables (all optional locally):
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `HABLA_DATABASE_URL` | `sqlite:///backend/habla.db` | SQLAlchemy URL |
+| `HABLA_DATABASE_URL` / `DATABASE_URL` | `sqlite:///backend/habla.db` | SQLAlchemy URL; `postgres://…` is accepted (driver added automatically) |
 | `HABLA_AUTO_SEED` | `true` | Seed when the DB has no learners |
 | `HABLA_ENABLE_DEV_TOOLS` | `true` | `/api/dev/*` demo endpoints |
 | `HABLA_CORS_ORIGINS` | localhost:3000 | Only needed if the browser calls the API directly |

@@ -33,3 +33,9 @@ def test_reset_restores_seed(client, db, lessons):
     assert client.post("/api/dev/reset").status_code == 204
     me = client.get("/api/me").json()
     assert me["total_xp"] == 178 and me["streak"]["current"] == 4
+
+
+def test_ensure_seeded_only_seeds_an_empty_database(engine):
+    from app.seed.seed import ensure_seeded
+
+    assert ensure_seeded(engine) is False  # already seeded by the fixture: left untouched

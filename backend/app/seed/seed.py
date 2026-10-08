@@ -12,7 +12,7 @@ obey exactly the same rules as live play.
 import random
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import Engine, func, inspect, select
+from sqlalchemy import Engine, func, inspect, select, text
 from sqlalchemy.orm import Session
 
 from app.core.config import GameRules, get_settings
@@ -33,6 +33,7 @@ from app.services import session_service
 from app.services.exercises import get_handler
 
 DEMO_START_GEMS = 500
+SEED_LOCK_KEY = 74_210  # arbitrary app-wide id for the seeding advisory lock
 DEMO_HEARTS_AFTER_SEED = 4  # simulate partial overnight regeneration
 
 RIVALS = [
@@ -184,12 +185,24 @@ def ensure_seeded(engine: Engine) -> bool:
     Hosting platforms often start with an empty disk, so the API seeds itself
     on first boot instead of requiring a manual step.
     """
-    if inspect(engine).has_table("users"):
-        with Session(engine) as db:
-            if db.scalar(select(func.count(User.id))):
-                return False
-    run(engine)
-    return True
+    with engine.connect() as lock_conn:
+        # Serverless platforms may boot several instances at once on a fresh
+        # database; a Postgres advisory lock lets exactly one of them seed.
+        is_pg = engine.dialect.name == "postgresql"
+        if is_pg:
+            lock_conn.execute(text("SELECT pg_advisory_lock(:k)"), {"k": SEED_LOCK_KEY})
+            lock_conn.commit()
+        try:
+            if inspect(engine).has_table("users"):
+                with Session(engine) as db:
+                    if db.scalar(select(func.count(User.id))):
+                        return False
+            run(engine)
+            return True
+        finally:
+            if is_pg:
+                lock_conn.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": SEED_LOCK_KEY})
+                lock_conn.commit()
 
 
 def main() -> None:

@@ -12,7 +12,16 @@ def make_engine(url: str, echo: bool = False) -> Engine:
     engine = create_engine(
         url,
         echo=echo,
-        connect_args={"check_same_thread": False} if is_sqlite else {},
+        connect_args=(
+            {"check_same_thread": False}
+            if is_sqlite
+            # Postgres: no server-side prepared statements. Transaction-mode
+            # poolers (PgBouncer, e.g. Neon's pooled URL) can hand each
+            # transaction a different backend, where they don't exist / clash.
+            else {"prepare_threshold": None}
+        ),
+        # Hosted Postgres (e.g. Neon) drops idle connections; check before use.
+        pool_pre_ping=not is_sqlite,
     )
     if is_sqlite:
 

@@ -27,16 +27,25 @@ class FakeClock:
         return self.now
 
 
+# Run the suite against another database, e.g. Postgres:
+#   HABLA_TEST_DATABASE_URL=postgresql+psycopg://user:pass@host/db pytest
+TEST_DATABASE_URL = os.environ.get("HABLA_TEST_DATABASE_URL")
+
+
 @pytest.fixture
 def engine():
-    eng = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    if TEST_DATABASE_URL:
+        eng = create_engine(TEST_DATABASE_URL, poolclass=StaticPool)
+    else:
+        eng = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
 
-    @event.listens_for(eng, "connect")
-    def _fk(conn, _):
-        conn.execute("PRAGMA foreign_keys=ON")
+        @event.listens_for(eng, "connect")
+        def _fk(conn, _):
+            conn.execute("PRAGMA foreign_keys=ON")
 
     seed_module.run(eng, now=FIXED_NOW)
-    return eng
+    yield eng
+    eng.dispose()  # release the connection (matters for real servers, e.g. Postgres)
 
 
 @pytest.fixture
