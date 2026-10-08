@@ -16,12 +16,13 @@ interface Props {
   combo: number;
   turn: number;
   onCheck: () => void;
+  onSkip?: () => void;
   onContinue: () => void;
   onRetryComplete: () => void;
 }
 
 /** Sticky bottom bar: Check → (correct | incorrect) feedback → Continue. */
-export function FeedbackBar({ phase, ready, result, error, combo, turn, onCheck, onContinue, onRetryComplete }: Props) {
+export function FeedbackBar({ phase, ready, result, error, combo, turn, onCheck, onSkip, onContinue, onRetryComplete }: Props) {
   if (phase === "completing") {
     return (
       <Bar tone="neutral">
@@ -88,12 +89,20 @@ export function FeedbackBar({ phase, ready, result, error, combo, turn, onCheck,
 
   return (
     <Bar tone="neutral">
-      <div className="flex-1" aria-live="polite">
-        {error && (
-          <p role="alert" className="text-sm font-bold text-coral-800">
-            {error.isNetwork ? "Connection lost." : error.message} Your answer is kept – press Check to try again.
-          </p>
+      <div className="flex flex-1 items-center gap-4">
+        {onSkip && (
+          // Duolingo's bottom-left Skip: counts as a miss and the exercise comes back later.
+          <Button variant="ghost" disabled={phase === "checking"} onClick={onSkip} className="shrink-0 sm:w-36">
+            Skip
+          </Button>
         )}
+        <div className="min-w-0 flex-1" aria-live="polite">
+          {error && (
+            <p role="alert" className="text-sm font-bold text-coral-800">
+              {error.isNetwork ? "Connection lost." : error.message} Your answer is kept – press Check to try again.
+            </p>
+          )}
+        </div>
       </div>
       <Button disabled={!ready} loading={phase === "checking"} onClick={onCheck} className="sm:w-44">
         Check

@@ -8,6 +8,7 @@ from app.schemas.session import (
     PracticeSummaryOut,
     ReviewOut,
     SessionOut,
+    SkipIn,
 )
 from app.services import practice_service, session_service
 
@@ -28,6 +29,12 @@ def get_attempt(attempt_id: int, db: DB, user: CurrentUser):
 @router.post("/attempts/{attempt_id}/answers", response_model=AnswerOut)
 def submit_answer(attempt_id: int, payload: AnswerIn, db: DB, user: CurrentUser):
     return session_service.submit_answer(db, user, attempt_id, payload.exercise_id, payload.answer)
+
+
+@router.post("/attempts/{attempt_id}/skip", response_model=AnswerOut)
+def skip_exercise(attempt_id: int, payload: SkipIn, db: DB, user: CurrentUser):
+    """Skip the current exercise: counts as a miss (heart in lessons) and is retried later."""
+    return session_service.submit_answer(db, user, attempt_id, payload.exercise_id, None, skip=True)
 
 
 @router.post("/attempts/{attempt_id}/complete", response_model=CompletionOut)

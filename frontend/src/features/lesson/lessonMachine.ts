@@ -53,6 +53,7 @@ export type LessonEvent =
   | { type: "LOAD_FAILED"; error: ApiError }
   | { type: "DRAFT_CHANGED"; draft: unknown }
   | { type: "SUBMIT" }
+  | { type: "SKIP" }
   | { type: "ANSWER_OK"; result: AnswerResult }
   | { type: "ANSWER_FAILED"; error: ApiError }
   | { type: "CONTINUE" }
@@ -116,6 +117,9 @@ export function lessonReducer(state: LessonState, event: LessonEvent): LessonSta
 
     case "SUBMIT":
       return state.phase === "answering" && state.draft !== null ? { ...state, phase: "checking", error: null } : state;
+
+    case "SKIP": // like Duolingo: allowed with no answer; the server records it as a miss
+      return state.phase === "answering" ? { ...state, phase: "checking", error: null } : state;
 
     case "ANSWER_OK": {
       if (state.phase !== "checking") return state;

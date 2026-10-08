@@ -90,7 +90,6 @@ function SkillPopover({ skill, theme }: { skill: Skill; theme: string }) {
     <div
       role="dialog"
       aria-label={`${skill.title} details`}
-      data-brand-surface
       className={clsx(
         "absolute top-full z-20 mt-3 w-72 animate-pop rounded-3xl border-b-[6px] p-5 text-white shadow-xl",
         locked ? "border-ink-300 bg-ink-200 !text-ink-500" : completed ? "border-sun-600 bg-sun-500" : t.banner,

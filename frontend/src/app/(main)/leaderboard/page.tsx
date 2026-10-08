@@ -1,9 +1,10 @@
 "use client";
 
 import clsx from "clsx";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 import { DailyGoalCard } from "@/components/gamification/DailyGoalCard";
+import { LEAGUES, LeagueBadge } from "@/components/gamification/LeagueBadge";
 import { PageShell } from "@/components/layout/PageShell";
 import { Avatar } from "@/components/ui/Avatar";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -12,6 +13,11 @@ import { useLeaderboard } from "@/lib/queries";
 import type { LeaderboardEntry } from "@/lib/types";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
+// Duolingo-style weekly league zones. Presentation only: there is no league-promotion
+// backend; ranks and XP are real.
+const PROMOTE = 3;
+const DEMOTE = 2;
+const CURRENT_LEAGUE = LEAGUES[0];
 const PERIODS = [
   { id: "week", label: "This week" },
   { id: "all", label: "All time" },
@@ -24,9 +30,23 @@ export default function LeaderboardPage() {
   return (
     <PageShell rail={<DailyGoalCard />}>
       <header className="flex flex-col items-center text-center">
-        <span className="text-6xl" aria-hidden>🏆</span>
-        <h1 className="mt-2 text-3xl font-black">Leaderboard</h1>
-        <p className="font-semibold text-ink-500">{board.data?.window_label ?? " "}</p>
+        {period === "week" ? (
+          <>
+            <div className="flex items-end gap-3" aria-hidden>
+              {LEAGUES.map((l, i) => (
+                <LeagueBadge key={l.name} league={l} size={i === 0 ? 64 : 44} dim={i !== 0} />
+              ))}
+            </div>
+            <h1 className="mt-3 text-3xl font-black">{CURRENT_LEAGUE.name} League</h1>
+            <p className="mt-1 font-semibold text-ink-500">Top {PROMOTE} advance to the next league</p>
+          </>
+        ) : (
+          <>
+            <span className="text-6xl" aria-hidden>🏆</span>
+            <h1 className="mt-2 text-3xl font-black">All-time leaderboard</h1>
+          </>
+        )}
+        <p className="text-sm font-bold text-ink-500">{board.data?.window_label ?? " "}</p>
       </header>
 
       <div role="tablist" aria-label="Leaderboard period" className="mx-auto mt-6 flex w-fit rounded-2xl bg-ink-100 p-1">
@@ -58,7 +78,17 @@ export default function LeaderboardPage() {
         )}
         {board.data && (
           <ol className="space-y-1">
-            {board.data.entries.map((e) => <Row key={e.user_id} entry={e} />)}
+            {board.data.entries.map((e, i, all) => {
+              const zones = period === "week" && all.length > PROMOTE + DEMOTE;
+              const zone = !zones ? undefined : e.rank <= PROMOTE ? "promote" : i >= all.length - DEMOTE ? "demote" : undefined;
+              return (
+                <Fragment key={e.user_id}>
+                  {zones && i === all.length - DEMOTE && <ZoneDivider kind="demote" />}
+                  <Row entry={e} zone={zone} />
+                  {zones && e.rank === PROMOTE && <ZoneDivider kind="promote" />}
+                </Fragment>
+              );
+            })}
           </ol>
         )}
         {board.data?.me && (
@@ -71,7 +101,18 @@ export default function LeaderboardPage() {
   );
 }
 
-function Row({ entry }: { entry: LeaderboardEntry }) {
+function ZoneDivider({ kind }: { kind: "promote" | "demote" }) {
+  const up = kind === "promote";
+  return (
+    <li className={clsx("flex list-none items-center gap-3 py-2 text-sm font-black uppercase tracking-wider", up ? "text-leaf-800" : "text-coral-800")}>
+      <span className={clsx("h-0.5 flex-1 rounded-full", up ? "bg-leaf-400" : "bg-coral-400")} />
+      {up ? "▲ Promotion zone" : "▼ Demotion zone"}
+      <span className={clsx("h-0.5 flex-1 rounded-full", up ? "bg-leaf-400" : "bg-coral-400")} />
+    </li>
+  );
+}
+
+function Row({ entry, zone }: { entry: LeaderboardEntry; zone?: "promote" | "demote" }) {
   return (
     <li
       aria-current={entry.is_me ? "true" : undefined}
@@ -80,7 +121,7 @@ function Row({ entry }: { entry: LeaderboardEntry }) {
         entry.is_me ? "border-2 border-ocean-400 bg-ocean-50" : "hover:bg-ink-50",
       )}
     >
-      <span className="w-8 text-center text-lg font-black text-ink-500">
+      <span className={clsx("w-8 text-center text-lg font-black", zone === "promote" ? "text-leaf-800" : zone === "demote" ? "text-coral-800" : "text-ink-500")}>
         {entry.rank === 0 ? "–" : MEDALS[entry.rank - 1] ?? entry.rank}
       </span>
       <Avatar name={entry.display_name} color={entry.avatar_color} />

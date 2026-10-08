@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   open: boolean;
@@ -13,7 +14,7 @@ interface ModalProps {
   hideTitle?: boolean;
 }
 
-/** Accessible dialog: focus moves in, Escape closes, focus is restored on close. */
+/** Accessible dialog: focus moves in, Escape closes, focus is restored on close. Rendered in a portal. */
 export function Modal({ open, onClose, title, children, className, hideTitle }: ModalProps) {
   const titleId = useId();
   const panel = useRef<HTMLDivElement>(null);
@@ -34,7 +35,9 @@ export function Modal({ open, onClose, title, children, className, hideTitle }: 
   }, [open, onClose]);
 
   if (!open) return null;
-  return (
+  // Portal to <body>: a dialog opened from inside a sticky/transformed element would
+  // otherwise be trapped in that element's stacking context and could render underneath.
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="presentation">
       <div className="absolute inset-0 animate-fade-in bg-black/60 backdrop-blur-[2px]" onClick={onClose} />
       <div
@@ -53,6 +56,7 @@ export function Modal({ open, onClose, title, children, className, hideTitle }: 
         </h2>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

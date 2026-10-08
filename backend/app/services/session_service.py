@@ -8,7 +8,7 @@ ones, least-recently-missed first), so:
   * completion can be verified ("every exercise answered correctly").
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import update
 from sqlalchemy.exc import IntegrityError
@@ -36,7 +36,9 @@ from app.schemas.session import (
     XpBreakdown,
 )
 from app.services import achievement_service, path_service
-from app.services.exercises import answer_text, get_handler, solution_text
+from app.services.exercises import CheckResult, answer_text, get_handler, solution_text
+
+SKIPPED = {"skipped": True}  # stored as the "answer" of a skipped exercise
 from app.services.learner_service import streak_state
 from app.services.rewards import level_for_xp, session_reward
 from app.services.streak import apply_activity
@@ -147,7 +149,10 @@ def get_session(db: Session, user: User, attempt_id: int) -> SessionOut:
     return session_view(db, user, attempt, resumed=True)
 
 
-def submit_answer(db: Session, user: User, attempt_id: int, exercise_id: int, raw_answer: dict) -> AnswerOut:
+def submit_answer(db: Session, user: User, attempt_id: int, exercise_id: int, raw_answer: dict | None,
+                  *, skip: bool = False) -> AnswerOut:
+    """Check an answer, or record a skip (`skip=True`). Like Duolingo, a skip
+    counts as a miss: it costs a heart in a lesson and the exercise comes back."""
     attempt = load_owned_attempt(db, user, attempt_id)
     if attempt.status != "in_progress":
         raise Conflict("This session is already finished.", code="attempt_closed")
@@ -162,7 +167,11 @@ def submit_answer(db: Session, user: User, attempt_id: int, exercise_id: int, ra
 
     exercise = item.exercise
     handler = get_handler(exercise.type)
-    result, clean_answer = handler.evaluate(exercise.data, exercise.solution, raw_answer)
+    if skip:
+        result = CheckResult(correct=False, correct_answer=solution_text(handler, exercise.data, exercise.solution))
+        clean_answer = SKIPPED
+    else:
+        result, clean_answer = handler.evaluate(exercise.data, exercise.solution, raw_answer)
 
     # Everything above was decided from a read. Claim the next answer slot
     # atomically so a duplicate request (double-click, two tabs) that read the
@@ -317,6 +326,8 @@ def _completion_view(db: Session, user: User, attempt: LessonAttempt, now: datet
         hearts=user.hearts,
         mistakes=attempt.mistakes,
         perfect=attempt.mistakes == 0,
+        accuracy=round(100 * len(attempt.items) / (len(attempt.items) + attempt.mistakes)) if attempt.items else 100,
+        duration_seconds=_duration_seconds(attempt),
         streak=StreakChange(current=user.current_streak, longest=user.longest_streak, extended=streak_extended),
         daily_goal=GoalChange(goal_xp=user.daily_goal_xp, xp_today=xp_today,
                               reached=xp_today >= user.daily_goal_xp, just_reached=goal_just_reached),
@@ -326,6 +337,17 @@ def _completion_view(db: Session, user: User, attempt: LessonAttempt, now: datet
         unlocked_skill=unlocked,
         achievements=achievement_service.to_out(unlocked_achievements, attempt.completed_at),
     )
+
+
+def _as_utc(dt: datetime) -> datetime:
+    # SQLite hands back naive datetimes (stored as UTC); Postgres returns aware ones.
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
+
+def _duration_seconds(attempt: LessonAttempt) -> int:
+    if not attempt.completed_at or not attempt.created_at:
+        return 0
+    return max(0, int((_as_utc(attempt.completed_at) - _as_utc(attempt.created_at)).total_seconds()))
 
 
 def abandon(db: Session, user: User, attempt_id: int) -> SessionOut:
@@ -354,7 +376,7 @@ def review(db: Session, user: User, attempt_id: int) -> ReviewOut:
         handler = get_handler(ex.type)
         items.append(ReviewItemOut(
             exercise_id=ex.id, type=ex.type, prompt=ex.prompt,
-            your_answer=answer_text(handler, ex.data, wrong[0].submitted),
+            your_answer="(skipped)" if wrong[0].submitted == SKIPPED else answer_text(handler, ex.data, wrong[0].submitted),
             correct_answer=solution_text(handler, ex.data, ex.solution),
             explanation=ex.explanation, times_missed=len(wrong),
         ))

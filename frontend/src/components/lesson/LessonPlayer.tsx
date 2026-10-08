@@ -129,6 +129,7 @@ export function LessonPlayer({ source }: { source: LessonSource }) {
             combo={state.combo}
             turn={state.turn}
             onCheck={lesson.submit}
+            onSkip={lesson.skip}
             onContinue={lesson.next}
             onRetryComplete={lesson.retryComplete}
           />

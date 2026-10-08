@@ -76,6 +76,7 @@ export const api = {
   session: (attemptId: number) => request<Session>(`/attempts/${attemptId}`),
   answer: (attemptId: number, exerciseId: number, answer: unknown) =>
     post<AnswerResult>(`/attempts/${attemptId}/answers`, { exercise_id: exerciseId, answer }),
+  skip: (attemptId: number, exerciseId: number) => post<AnswerResult>(`/attempts/${attemptId}/skip`, { exercise_id: exerciseId }),
   complete: (attemptId: number) => post<Completion>(`/attempts/${attemptId}/complete`),
   abandon: (attemptId: number) => post<Session>(`/attempts/${attemptId}/abandon`),
   review: (attemptId: number) => request<Review>(`/attempts/${attemptId}/review`),

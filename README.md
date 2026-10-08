@@ -9,8 +9,8 @@ gamification (hearts, XP, streaks, daily goals, mastery, achievements, leaderboa
 Everything visual is original: the mascot **Pip** is hand-written SVG, sounds are synthesised
 with Web Audio, and there are no third-party image or audio assets.
 
-> * Deeper design notes (ER model, state machine, API contract, gamification flow):
->   [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+> * Design notes (ER model, state machine, API contract, gamification flow): [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+> * Every requirement mapped to its implementation and tests: [`docs/REQUIREMENTS_CHECK.md`](docs/REQUIREMENTS_CHECK.md)
 
 ---
 
@@ -46,21 +46,10 @@ Re-run `python -m app.seed.seed` at any time to reset.
 
 ### Tests
 
-Five layers. [`docs/REQUIREMENTS_CHECK.md`](docs/REQUIREMENTS_CHECK.md) maps every requirement to the test that proves it.
-
 ```bash
-cd backend  && python -m pytest --cov=app   # 80 tests, 94% coverage: rules, properties (Hypothesis), API, concurrency, whole course
-cd frontend && npm test                     # 21 tests: state machine, exercises, LessonPlayer integration
+cd backend  && python -m pytest --cov=app   # 75 tests, 94% coverage: answer checking, streak/XP/unlock rules, full API lesson flow
+cd frontend && npm test                     # 27 tests: lesson state machine, exercise interactions, LessonPlayer, theme
 cd frontend && npm run typecheck && npm run build
-```
-
-End-to-end (Playwright, real browser, desktop **and** mobile, plus axe accessibility scans) runs against
-the app while it's running:
-
-```bash
-cd frontend && npx playwright install chromium   # once
-# with the backend on :8000 and the frontend on :3000 (ideally `npm run build && npm start`):
-npm run e2e                                      # 21 scenarios × 2 viewports
 ```
 
 ---
@@ -69,20 +58,20 @@ npm run e2e                                      # 21 scenarios × 2 viewports
 
 | Area | What it does |
 |---|---|
-| **Learning path** | Units → skills rendered as a winding trail from backend data. Skill nodes show locked / available / in-progress / completed, a progress ring, and a **crown level (0–5)**. Popover lists lessons and starts the next one. |
+| **Learning path** | Units → skills rendered as a winding trail from backend data. Skill nodes show locked / available / in-progress / completed, a progress ring, and a **crown level (0–5)**. Popover lists lessons and starts the next one. Unit banners stay pinned while you scroll their skills, with a **Guidebook** listing each skill and lesson. |
 | **Lesson engine** | 5 exercise types (multiple choice with pictures, fill-in-the-blank, word bank, match pairs, typed answer) plugged in via a registry. Missed exercises come back at the end. Refreshing mid-lesson resumes exactly where you were. |
-| **Feedback** | Bottom action bar: Check → correct (praise, combo, flying +XP) or incorrect (shake, correct answer, explanation). Enter and number keys work throughout. |
+| **Feedback** | Bottom action bar: Check → correct (praise, combo, flying +XP) or incorrect (shake, correct answer, explanation). Enter and number keys work throughout. **Skip** (bottom-left) counts as a miss and the exercise comes back. The completion screen shows XP, accuracy and time tiles. |
 | **Hearts** | −1 per mistake in lessons, persisted immediately. At zero: refill with gems, earn one through practice, or end the lesson. |
 | **XP / levels / gems** | Exercise XP + completion bonus + perfect bonus, credited atomically at completion. Levels derive from total XP. |
 | **Streak & daily goal** | Calculated on the learner's *local* calendar (timezone auto-detected). A streak "at risk" banner appears when you practised yesterday but not yet today. |
 | **Smart practice** | Builds a session from exercises you've missed more often than you've got right. Never costs hearts and earns one back. |
 | **Mistake review** | After a session: "You said / Correct / why" for every missed exercise. |
 | **Achievements** | Data-driven (`metric ≥ threshold` rows). Unlocks appear on the completion screen; locked ones show progress. |
-| **Leaderboard** | Weekly (rolling 7 days, from activity data) and all-time, with the current learner highlighted and pinned if outside the top list. |
+| **Leaderboard** | Weekly (rolling 7 days, from activity data) and all-time, with the current learner highlighted and pinned if outside the top list. The weekly view is styled as a league (Bronze… Ruby badges, promotion and demotion zones); league tiers are visual only. |
 | **Profile & settings** | Level progress, stats grid, achievements, 7-day momentum chart; daily goal / name / sound settings; account/notification placeholders. |
 | **Quests & Shop** | Daily quests derived from real activity (XP, lessons, streak). The shop refills hearts with (mocked) gems; Super and Streak Freeze are "coming soon". |
 | **Proportions** | Root font size is 90% so the UI matches Duolingo's denser web layout. All sizes (including SVG illustrations, rings and path offsets) are rem-based via `src/lib/units.ts`, so that single value scales everything, and a user's own browser font-size preference still applies. |
-| **Dark mode** | Duolingo-style dark theme (Settings → Appearance: Light / Dark / System). Every colour is a CSS variable generated from one palette (`frontend/scripts/palette.mjs`), so components need no `dark:` variants; a pre-paint script prevents a white flash. Accessibility scans run in both themes. |
+| **Dark mode** | Duolingo-style dark theme (Settings → Appearance: Light / Dark / System). Every colour is a CSS variable generated from one palette (`frontend/scripts/palette.mjs`), so components need no `dark:` variants; a pre-paint script prevents a white flash. |
 | **Demo tools** | Settings → *Next day* / *Skip a day* / *Reset demo* make the day-based rules (streak, daily goal) demonstrable without waiting for midnight. |
 | **Resilience** | Skeletons, specific error messages with retry, answer kept on network failure, completion retry that can't double-award, 404 page. |
 | **Responsive & a11y** | Bottom tab bar on mobile and a sidebar plus right rail on desktop. Touch-sized tiles, semantic buttons/radios, visible focus rings, aria-live feedback, reduced-motion support, no colour-only states (icons/text accompany colour). |
@@ -126,7 +115,7 @@ backend/app/
                                   achievement_service · leaderboard_service · streak · rewards · unlocks
   services/exercises/             registry.py · handlers.py · normalize.py
   seed/                           builders.py (exercise DSL) · course_spanish.py (content) · seed.py
-backend/tests/                    answer validation · pure domain rules · end-to-end lesson flow
+backend/tests/                    answer validation · pure domain rules · API lesson flow · demo tools
 
 frontend/src/
   app/                            (main)/ learn · leaderboard · profile · settings   lesson/[id] · practice
@@ -211,6 +200,7 @@ All under `/api`. Interactive docs live at `http://127.0.0.1:8000/docs`. Errors 
 | POST | `/lessons/{id}/start` | Start **or resume**. 403 `lesson_locked` / `out_of_hearts`, 404 `lesson_not_found` |
 | GET | `/attempts/{id}` | Resume a session |
 | POST | `/attempts/{id}/answers` | See below. 409 `out_of_order` / `attempt_closed`, 422 `invalid_answer`, 403 `out_of_hearts` |
+| POST | `/attempts/{id}/skip` | `{exercise_id}`: skip the current exercise (counts as a miss) |
 | POST | `/attempts/{id}/complete` | **Idempotent.** 409 `session_incomplete` |
 | POST | `/attempts/{id}/abandon` | Quit / out of hearts → `abandoned` / `failed` |
 | GET | `/attempts/{id}/review` | Mistakes with your answer + solution; 409 while in progress |
@@ -327,9 +317,7 @@ returns. Unit themes and flags are data-keyed.
 
 ## Deployment
 
-### Option A (recommended, free, no card): Vercel + Neon Postgres
-
-Two Vercel projects from this one repo, plus Vercel's free Neon Postgres integration:
+The live demo runs on **Vercel + Neon Postgres** (free tiers). Two Vercel projects from this one repo, plus Vercel's free Neon Postgres integration:
 
 | Vercel project | Root directory | What Vercel does |
 |---|---|---|
@@ -344,26 +332,8 @@ Two Vercel projects from this one repo, plus Vercel's free Neon Postgres integra
 
 **Why Postgres in the hosted demo when the project uses SQLite?** Serverless functions have no
 persistent disk, so a SQLite file would reset on every cold start and differ between instances. The
-code is unchanged: SQLAlchemy plus one environment variable. The whole backend suite runs green on both
-engines (`HABLA_TEST_DATABASE_URL=postgresql+psycopg://… pytest`), and the E2E suite passes against a
-Postgres-backed stack. psycopg's server-side prepared statements are disabled so Neon's pooled
-(PgBouncer) URL works.
-
-### Option B: one Docker container (any Docker host)
-
-The root [`Dockerfile`](Dockerfile) builds frontend **and** backend into one image: Next.js on port 7860
-proxies `/api` to FastAPI on `127.0.0.1:8000` ([`deploy/start.sh`](deploy/start.sh)), with SQLite inside
-the container.
-
-```bash
-docker build -t habla . && docker run -p 7860:7860 habla     # http://localhost:7860
-```
-
-### Option C: Render (API) + Vercel (web)
-
-[`render.yaml`](render.yaml) is a Render Blueprint for the API (SQLite on the instance disk, re-seeded on
-restart). Choose the *Free* instance type, or create a plain *Web Service* with root `backend` and start
-command `uvicorn app.main:app --host 0.0.0.0 --port $PORT`. Then deploy the frontend to Vercel as above.
+code is unchanged: SQLAlchemy plus one environment variable (`DATABASE_URL`). psycopg's server-side
+prepared statements are disabled so Neon's pooled (PgBouncer) URL works.
 
 Environment variables (all optional locally):
 
@@ -375,9 +345,8 @@ Environment variables (all optional locally):
 | `HABLA_CORS_ORIGINS` | localhost:3000 | Only needed if the browser calls the API directly |
 | `HABLA_API_ORIGIN` (frontend) | `http://127.0.0.1:8000` | Where Next proxies `/api` |
 
-Free Render instances sleep when idle. The first request after a while can take ~50s; the UI
-shows "Can't reach Habla" with a retry button meanwhile. Their disk is ephemeral, so the demo
-data resets on restart (and re-seeds automatically).
+Neon's free database pauses after ~5 idle minutes, so the first request after a quiet period takes
+a second or two longer.
 
 ## Assumptions & trade-offs
 

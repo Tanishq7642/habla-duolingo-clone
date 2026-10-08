@@ -1,10 +1,11 @@
 import type { UnitTheme } from "@/lib/types";
 
 /** Visual identity per unit theme (content decides the key, UI decides the look). */
-export const unitThemes: Record<UnitTheme, { banner: string; node: string; ring: string; text: string }> = {
-  leaf: { banner: "bg-leaf-500 border-leaf-700", node: "bg-leaf-500 border-leaf-700", ring: "#58CC02", text: "!text-leaf-800" },
-  sky: { banner: "bg-ocean-500 border-ocean-700", node: "bg-ocean-500 border-ocean-700", ring: "#1CB0F6", text: "!text-ocean-800" },
-  sun: { banner: "bg-flame-500 border-flame-600", node: "bg-flame-500 border-flame-600", ring: "#FF9600", text: "!text-flame-800" },
+// `shelf` = the thick darker "3D" edge under unit banners (Duolingo's raised look).
+export const unitThemes: Record<UnitTheme, { banner: string; shelf: string; node: string; ring: string; text: string }> = {
+  leaf: { banner: "bg-leaf-500 border-leaf-700", shelf: "shadow-[0_6px_0_0_rgb(var(--leaf-700))]", node: "bg-leaf-500 border-leaf-700", ring: "#58CC02", text: "!text-leaf-800" },
+  sky: { banner: "bg-ocean-500 border-ocean-700", shelf: "shadow-[0_6px_0_0_rgb(var(--ocean-700))]", node: "bg-ocean-500 border-ocean-700", ring: "#1CB0F6", text: "!text-ocean-800" },
+  sun: { banner: "bg-flame-500 border-flame-600", shelf: "shadow-[0_6px_0_0_rgb(var(--flame-600))]", node: "bg-flame-500 border-flame-600", ring: "#FF9600", text: "!text-flame-800" },
 };
 
 export const themeFor = (theme: string) => unitThemes[theme as UnitTheme] ?? unitThemes.leaf;

@@ -38,21 +38,19 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
           <StatTile label="Total XP" tone="sun" icon="⚡">
             <AnimatedNumber value={c.xp.total} from={0} />
           </StatTile>
-          <StatTile label={c.perfect ? "Accuracy" : "Mistakes"} tone="leaf" icon={c.perfect ? "🎯" : "📝"}>
-            {c.perfect ? "100%" : c.mistakes}
+          <StatTile label={accuracyLabel(c.accuracy)} tone="leaf" icon="🎯">
+            {c.accuracy}%
           </StatTile>
-          {c.kind === "practice" ? (
-            <StatTile label="Hearts" tone="coral" icon="❤️">+{c.hearts_awarded}</StatTile>
-          ) : (
-            <StatTile label="Gems" tone="gem" icon="💎">+{c.gems_awarded}</StatTile>
-          )}
+          <StatTile label={c.duration_seconds <= SPEEDY_SECONDS ? "Speedy" : "Committed"} tone="ocean" icon="⏱️">
+            {formatDuration(c.duration_seconds)}
+          </StatTile>
         </div>
 
-        {c.xp.bonus > 0 && (
-          <p className="-mt-2 text-sm font-bold text-ink-500">
-            {c.xp.base} XP from exercises + {c.xp.bonus} bonus{c.perfect && c.kind === "lesson" ? " (incl. perfect bonus)" : ""}
-          </p>
-        )}
+        <p className="-mt-2 text-sm font-bold text-ink-500">
+          {c.xp.base} XP from exercises + {c.xp.bonus} bonus{c.perfect && c.kind === "lesson" ? " (incl. perfect bonus)" : ""}
+          {c.gems_awarded > 0 && <> · +{c.gems_awarded} 💎</>}
+          {c.hearts_awarded > 0 && <> · +{c.hearts_awarded} ❤️</>}
+        </p>
 
         <section aria-label="Progress" className="w-full space-y-3 text-left">
           <Row icon="🔥" title={`${c.streak.current}-day streak`} highlight={c.streak.extended}>
@@ -120,17 +118,24 @@ export function LessonComplete({ completion: c, onContinue }: Props) {
   );
 }
 
+/** Same idea as Duolingo's end-of-lesson tiles: a word for how it went, then the number. */
+const SPEEDY_SECONDS = 120;
+const accuracyLabel = (pct: number) => (pct === 100 ? "Amazing" : pct >= 80 ? "Great" : "Good");
+export const formatDuration = (s: number) =>
+  s >= 3600 ? "60:00+" : `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
 const tileTones = {
   sun: "border-sun-500 bg-sun-500",
   leaf: "border-leaf-500 bg-leaf-500",
   gem: "border-gem-500 bg-gem-500",
   coral: "border-coral-500 bg-coral-500",
+  ocean: "border-ocean-500 bg-ocean-500",
 };
 
 function StatTile({ label, tone, icon, children }: { label: string; tone: keyof typeof tileTones; icon: string; children: React.ReactNode }) {
   return (
     <div className={clsx("animate-pop overflow-hidden rounded-2xl border-2", tileTones[tone])}>
-      <p data-brand-surface className="py-1 text-[0.6875rem] font-black uppercase tracking-wider text-white">{label}</p>
+      <p className="py-1 text-[0.6875rem] font-black uppercase tracking-wider text-white">{label}</p>
       <p className="flex items-center justify-center gap-1.5 rounded-xl bg-surface py-3 text-xl font-black text-ink-900">
         <span aria-hidden>{icon}</span>
         {children}

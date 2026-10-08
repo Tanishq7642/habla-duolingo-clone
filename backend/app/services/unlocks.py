@@ -13,7 +13,7 @@ Rules
     lessons; replaying lessons after completion raises it.
   * Completion is sticky: a skill whose lessons are all done shows as completed
     even if content is later inserted before it. Learners never lose earned
-    progress. (Edge case found by the property test in tests/test_properties.py.)
+    progress.
 """
 
 from dataclasses import dataclass, field

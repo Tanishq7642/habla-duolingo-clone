@@ -14,7 +14,7 @@ export function ProfileHeader({ learner }: { learner: Learner }) {
       </Link>
       <div className="relative">
         <Avatar name={learner.display_name} color={learner.avatar_color} size={112} />
-        <span data-brand-surface className="absolute -bottom-2 -right-2 rounded-xl border-2 border-white bg-grape-500 px-2 py-0.5 text-sm font-black text-white">
+        <span className="absolute -bottom-2 -right-2 rounded-xl border-2 border-white bg-grape-500 px-2 py-0.5 text-sm font-black text-white">
           Lv {level}
         </span>
       </div>

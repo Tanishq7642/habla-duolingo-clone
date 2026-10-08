@@ -17,9 +17,12 @@ export function PageShell({ children, rail, narrow }: { children: ReactNode; rai
         <div className="xl:pt-8">{children}</div>
       </main>
       {rail && (
-        <aside className="sticky top-0 hidden h-[100dvh] w-[25.5rem] shrink-0 space-y-6 overflow-y-auto overflow-x-hidden py-6 xl:block" aria-label="Your progress">
-          <TopStats size="lg" />
-          {rail}
+        // Scrolls with the page (no inner scrollbar, like Duolingo); only the stats bar stays pinned.
+        <aside className="hidden w-[25.5rem] shrink-0 pb-12 xl:block" aria-label="Your progress">
+          <div className="sticky top-0 z-20 -mx-2 bg-surface px-2 pb-4 pt-6">
+            <TopStats size="lg" />
+          </div>
+          <div className="space-y-6">{rail}</div>
         </aside>
       )}
     </div>

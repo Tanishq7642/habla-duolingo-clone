@@ -10,6 +10,8 @@ import { usePath } from "@/lib/queries";
 import type { LearningPath as Path, UnitNode } from "@/lib/types";
 import { rem } from "@/lib/units";
 
+import { GuidebookIcon } from "./GuidebookIcon";
+import { GuidebookModal } from "./GuidebookModal";
 import { SkillNode } from "./SkillNode";
 import { TRAIL_OFFSETS, themeFor } from "./theme";
 
@@ -57,7 +59,7 @@ export function LearningPath() {
             {unit.skills.map((skill) => {
               const offset = TRAIL_OFFSETS[index++ % TRAIL_OFFSETS.length];
               return (
-                <li key={skill.id} data-skill-node className={clsx(openSkill === skill.id && "z-20")}>
+                <li key={skill.id} data-skill-node className={clsx("relative", openSkill === skill.id && "z-20")}>
                   <SkillNode
                     skill={skill}
                     theme={unit.theme}
@@ -82,19 +84,32 @@ export function LearningPath() {
 
 function UnitBanner({ unit }: { unit: UnitNode }) {
   const t = themeFor(unit.theme);
-  const done = unit.skills.filter((s) => s.status === "completed").length;
+  const [guideOpen, setGuideOpen] = useState(false);
   return (
-    <header data-brand-surface className={clsx("flex items-center justify-between gap-4 rounded-3xl border-b-[6px] px-5 py-4 text-white", t.banner)}>
-      <div>
-        <p className="text-xs font-black uppercase tracking-[0.15em] opacity-85">Unit {unit.position}</p>
-        <h2 id={`unit-${unit.id}`} className="text-2xl font-black">{unit.title}</h2>
-        <p className="font-semibold opacity-90">{unit.description}</p>
-      </div>
-      <div className="shrink-0 rounded-2xl bg-white/20 px-3 py-2 text-center">
-        <p className="text-xl font-black">{done}/{unit.skills.length}</p>
-        <p className="text-[0.625rem] font-black uppercase tracking-wider opacity-90">skills</p>
-      </div>
-    </header>
+    // Pinned while this unit's skills scroll by (like Duolingo). Each <section> bounds its own
+    // sticky banner, so the next unit's banner pushes this one away. The phone offset clears the
+    // sticky stats header; the background hides path nodes scrolling underneath.
+    <div className="sticky top-[calc(3.5rem+2px)] z-10 -mx-1 bg-surface px-1 pb-4 pt-2 xl:top-0 xl:pt-6">
+      <header className={clsx("flex items-stretch justify-between rounded-2xl text-white", t.banner, t.shelf)}>
+        <div className="min-w-0 px-5 py-4">
+          <p className="text-[0.8rem] font-black uppercase tracking-[0.12em] opacity-80">Unit {unit.position}</p>
+          <h2 id={`unit-${unit.id}`} className="text-[1.45rem] font-black leading-tight">{unit.title}</h2>
+          <p className="mt-0.5 font-semibold opacity-90">{unit.description}</p>
+        </div>
+        <div className="flex shrink-0 items-center border-l-2 border-black/15 px-4">
+          <button
+            type="button"
+            onClick={() => setGuideOpen(true)}
+            className="flex items-center gap-2 rounded-2xl border-2 border-b-4 border-black/20 px-3 py-2.5 text-sm font-black uppercase tracking-wide transition hover:bg-white/10 active:translate-y-[2px] active:border-b-2"
+          >
+            <GuidebookIcon className="h-5 w-5" />
+            <span className="hidden sm:inline">Guidebook</span>
+            <span className="sr-only sm:hidden">Guidebook</span>
+          </button>
+        </div>
+      </header>
+      <GuidebookModal unit={unit} open={guideOpen} onClose={() => setGuideOpen(false)} />
+    </div>
   );
 }
 

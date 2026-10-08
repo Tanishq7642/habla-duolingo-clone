@@ -56,7 +56,7 @@ const answer = (over: Partial<AnswerResult>): AnswerResult => ({
 
 const completion = {
   attempt_id: 7, kind: "lesson", already_completed: false, xp: { base: 12, bonus: 5, total: 17 },
-  gems_awarded: 5, hearts_awarded: 0, hearts: 4, mistakes: 1, perfect: false,
+  gems_awarded: 5, hearts_awarded: 0, hearts: 4, mistakes: 1, perfect: false, accuracy: 67, duration_seconds: 75,
   streak: { current: 5, longest: 5, extended: true },
   daily_goal: { goal_xp: 20, xp_today: 17, reached: false, just_reached: false },
   level: { level: 3, xp_into_level: 40, xp_for_next_level: 150, leveled_up: false },
@@ -137,6 +137,9 @@ describe("LessonPlayer", () => {
     expect(await screen.findByText("Lesson complete!")).toBeInTheDocument();
     expect(await screen.findByText("17")).toBeInTheDocument(); // animated XP total settles
     expect(screen.getByText(/New skill unlocked/)).toHaveTextContent("Animals");
+    expect(screen.getByText("67%")).toBeInTheDocument(); // accuracy tile ("Good")
+    expect(screen.getByText("Good")).toBeInTheDocument();
+    expect(screen.getByText("1:15")).toBeInTheDocument(); // time tile ("Speedy")
     expect(calls.filter((c) => c.path === "/attempts/7/complete")).toHaveLength(1);
 
     await user.click(screen.getByRole("button", { name: "Continue" }));
@@ -158,6 +161,20 @@ describe("LessonPlayer", () => {
     expect(await screen.findByRole("button", { name: "Continue" })).toBeInTheDocument();
     expect(screen.queryByText(/Connection lost/)).not.toBeInTheDocument();
     expect(attempts).toBe(2);
+  });
+
+  it("Skip works with no answer selected and shows the correct answer", async () => {
+    const user = userEvent.setup();
+    routes["POST /attempts/7/skip"] = (body) => {
+      expect(body).toEqual({ exercise_id: 101 });
+      return { json: answer({ correct: false, correct_answer: "la manzana", xp_earned: 0, hearts_remaining: 4, requeued: true }) };
+    };
+    renderLesson();
+    await screen.findByText("Which one is “the apple”?");
+    expect(screen.getByRole("button", { name: "Check" })).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Skip" }));
+    expect(await screen.findByText("Not quite")).toBeInTheDocument();
+    expect(screen.getByText(/Correct answer:/)).toHaveTextContent("la manzana");
   });
 
   it("shows the out-of-hearts modal when the last heart is lost", async () => {

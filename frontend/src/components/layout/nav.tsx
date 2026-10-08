@@ -26,7 +26,7 @@ export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 rounded-xl px-2" aria-label="Habla home">
       {/* Logotype: brand colour on purpose (WCAG exempts logos). */}
-      <span className="text-3xl font-black tracking-tight text-leaf-500" data-brand-surface>habla</span>
+      <span className="text-3xl font-black tracking-tight text-leaf-500">habla</span>
     </Link>
   );
 }

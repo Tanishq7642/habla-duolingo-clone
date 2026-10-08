@@ -12,8 +12,10 @@ frontend/next-env.d.ts
 .env.local
 coverage/
 frontend/test-results/
-frontend/playwright-report/
 .coverage
 
 # local editor/agent tooling
 .claude/
+
+# Personal notes (never committed)
+private-notes/

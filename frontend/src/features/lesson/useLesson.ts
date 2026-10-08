@@ -77,6 +77,19 @@ export function useLesson(source: LessonSource) {
     }
   }, [ready, state.session, state.draft, exercise, queryClient]);
 
+  const skip = useCallback(async () => {
+    if (state.phase !== "answering" || !state.session || !exercise) return;
+    dispatch({ type: "SKIP" });
+    try {
+      const result = await api.skip(state.session.attempt_id, exercise.id);
+      sfx.wrong();
+      patchLearner(queryClient, { hearts: result.hearts_remaining });
+      dispatch({ type: "ANSWER_OK", result });
+    } catch (e) {
+      dispatch({ type: "ANSWER_FAILED", error: toApiError(e) });
+    }
+  }, [state.phase, state.session, exercise, queryClient]);
+
   const next = useCallback(() => dispatch({ type: "CONTINUE" }), []);
 
   // Completion runs whenever we enter `completing` without an error. The server
@@ -110,5 +123,5 @@ export function useLesson(source: LessonSource) {
     }
   }, [state.session, queryClient]);
 
-  return { state, exercise, definition, ready, setDraft, submit, next, retryComplete, heartsRefilled, quit, reload: load };
+  return { state, exercise, definition, ready, setDraft, submit, skip, next, retryComplete, heartsRefilled, quit, reload: load };
 }

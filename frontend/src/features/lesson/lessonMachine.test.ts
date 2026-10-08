@@ -58,6 +58,13 @@ describe("lessonMachine", () => {
     expect(lessonReducer(checking, { type: "DRAFT_CHANGED", draft: { option_id: "b" } }).draft).toEqual({ option_id: "a" });
   });
 
+  it("skip is allowed without an answer, but only while answering", () => {
+    const state = loaded();
+    expect(lessonReducer(state, { type: "SKIP" }).phase).toBe("checking");
+    const checking = run([{ type: "DRAFT_CHANGED", draft: {} }, { type: "SUBMIT" }], state);
+    expect(lessonReducer(checking, { type: "SKIP" })).toBe(checking);
+  });
+
   it("correct answer → feedback → next exercise with fresh draft", () => {
     let state = run([{ type: "DRAFT_CHANGED", draft: { option_id: "a" } }, { type: "SUBMIT" }, { type: "ANSWER_OK", result: result() }], loaded());
     expect(state.phase).toBe("feedback");

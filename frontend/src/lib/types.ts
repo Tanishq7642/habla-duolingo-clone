@@ -146,6 +146,8 @@ export interface Completion {
   hearts: number;
   mistakes: number;
   perfect: boolean;
+  accuracy: number;
+  duration_seconds: number;
   streak: { current: number; longest: number; extended: boolean };
   daily_goal: { goal_xp: number; xp_today: number; reached: boolean; just_reached: boolean };
   level: Level & { leveled_up: boolean };

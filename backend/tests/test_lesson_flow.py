@@ -253,3 +253,30 @@ def test_leaderboard_highlights_learner(client):
         xps = [e["xp"] for e in board["entries"]]
         assert xps == sorted(xps, reverse=True)
     assert client.get("/api/leaderboard?period=year").status_code == 422
+
+
+# ---------------------------------------------------------------- skip & completion stats
+def test_skip_counts_as_a_miss_and_comes_back(client, db, lessons):
+    session = start(client, lessons["Food/2"])
+    skipped = session["next_exercise_id"]
+    r = client.post(f"/api/attempts/{session['attempt_id']}/skip", json={"exercise_id": skipped})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["correct"] is False and body["requeued"] is True
+    assert body["hearts_remaining"] == 3 and body["correct_answer"]
+    # Can't skip something that isn't the current exercise.
+    again = client.post(f"/api/attempts/{session['attempt_id']}/skip", json={"exercise_id": skipped})
+    assert again.status_code == 409
+
+    session = play_through(client, db, {**session, "next_exercise_id": body["next_exercise_id"]})
+    done = client.post(f"/api/attempts/{session['attempt_id']}/complete").json()
+    assert done["mistakes"] == 1 and done["perfect"] is False
+    items = client.get(f"/api/attempts/{session['attempt_id']}/review").json()["items"]
+    assert items[0]["your_answer"] == "(skipped)"
+
+
+def test_completion_reports_accuracy_and_duration(client, db, lessons):
+    session = play_through(client, db, start(client, lessons["Food/2"]))
+    done = client.post(f"/api/attempts/{session['attempt_id']}/complete").json()
+    assert done["accuracy"] == 100
+    assert done["duration_seconds"] >= 0

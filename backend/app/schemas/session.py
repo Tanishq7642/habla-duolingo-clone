@@ -40,6 +40,10 @@ class AnswerIn(BaseModel):
     answer: dict[str, Any]
 
 
+class SkipIn(BaseModel):
+    exercise_id: int = Field(gt=0)
+
+
 class AnswerOut(BaseModel):
     correct: bool
     correct_answer: str
@@ -105,6 +109,8 @@ class CompletionOut(BaseModel):
     hearts: int
     mistakes: int
     perfect: bool
+    accuracy: int  # % of answers that were right (exercises / (exercises + misses))
+    duration_seconds: int  # start → finish, for the "SPEEDY / COMMITTED" tile
     streak: StreakChange
     daily_goal: GoalChange
     level: LevelChange
