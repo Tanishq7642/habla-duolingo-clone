@@ -84,6 +84,11 @@ class TestWordBank:
 class TestMatchPairs:
     ex = match([("perro", "dog"), ("gato", "cat"), ("agua", "water")])
 
+    def test_board_is_never_pre_aligned(self):
+        sol = self.ex["solution"]["pairs"]
+        rows = zip(self.ex["data"]["left"], self.ex["data"]["right"])
+        assert all(sol[l["id"]] != r["id"] for l, r in rows)
+
     def test_all_correct(self):
         assert evaluate(self.ex, {"pairs": self.ex["solution"]["pairs"]}).correct
 

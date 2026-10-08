@@ -70,12 +70,15 @@ def bank(source: str, answer: str, distractors: list[str], explanation: str, als
 
 
 def match(pairs: list[tuple[str, str]], explanation: str = "Each Spanish word pairs with its English meaning."):
-    left = [{"id": f"l{i}", "text": es} for i, (es, _) in enumerate(pairs)]
+    left = _shuffled([{"id": f"l{i}", "text": es} for i, (es, _) in enumerate(pairs)])
     right_ids = {en: f"r{i}" for i, (_, en) in enumerate(pairs)}
-    right = _shuffled([{"id": rid, "text": en} for en, rid in right_ids.items()])
     solution = {f"l{i}": right_ids[en] for i, (_, en) in enumerate(pairs)}
+    right = [{"id": rid, "text": en} for en, rid in right_ids.items()]
+    # No word may sit directly across from its partner, or the board solves itself.
+    while any(solution[l["id"]] == r["id"] for l, r in zip(left, right)):
+        right = _shuffled(right)
     return dict(type="match_pairs", prompt="Tap the matching pairs",
-                data={"left": _shuffled(left), "right": right},
+                data={"left": left, "right": right},
                 solution={"pairs": solution}, explanation=explanation, xp=XP_RECOGNITION)
 
 
