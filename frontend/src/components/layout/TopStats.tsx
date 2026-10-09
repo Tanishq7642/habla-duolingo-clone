@@ -1,7 +1,8 @@
 "use client";
 
 import clsx from "clsx";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 import { HeartIcon } from "@/components/lesson/LessonHeader";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
@@ -130,14 +131,51 @@ export function TopStats({ className, size = "md" }: { className?: string; size?
   );
 }
 
+const POPOVER_WIDTH = 288; // px
+const EDGE = 16;
+
+/**
+ * A stat button plus its info card. The card is rendered in a portal on <body>
+ * with fixed positioning under the button: the stats live inside sticky bars
+ * (rail / phone header), and anything inside those would be clipped by them or
+ * hidden under the pinned unit banner.
+ */
 function StatPopover({ label, trigger, children, large }: { label: string; trigger: ReactNode; children: ReactNode; large?: boolean }) {
   const [open, setOpen] = useState(false);
-  const root = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number; width: number } | null>(null);
+  const button = useRef<HTMLButtonElement>(null);
+  const card = useRef<HTMLDivElement>(null);
 
+  // Place the card under the button, kept inside the viewport; follow scroll/resize.
+  useLayoutEffect(() => {
+    if (!open) return;
+    const place = () => {
+      const r = button.current?.getBoundingClientRect();
+      if (!r) return;
+      const width = Math.min(POPOVER_WIDTH, window.innerWidth - EDGE * 2);
+      const centred = r.left + r.width / 2 - width / 2;
+      const left = Math.max(EDGE, Math.min(centred, window.innerWidth - width - EDGE));
+      setPos({ top: r.bottom + 8, left, width });
+    };
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [open]);
+
+  // Close on outside click / Escape (the card is outside the button's DOM tree, so check both).
   useEffect(() => {
     if (!open) return;
     const close = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof KeyboardEvent ? e.key === "Escape" : !root.current?.contains(e.target as Node)) setOpen(false);
+      if (e instanceof KeyboardEvent) {
+        if (e.key === "Escape") setOpen(false);
+        return;
+      }
+      const target = e.target as Node;
+      if (!button.current?.contains(target) && !card.current?.contains(target)) setOpen(false);
     };
     document.addEventListener("mousedown", close);
     document.addEventListener("keydown", close);
@@ -148,8 +186,9 @@ function StatPopover({ label, trigger, children, large }: { label: string; trigg
   }, [open]);
 
   return (
-    <div ref={root} className="relative">
+    <div className="relative">
       <button
+        ref={button}
         type="button"
         aria-label={label}
         aria-expanded={open}
@@ -158,15 +197,20 @@ function StatPopover({ label, trigger, children, large }: { label: string; trigg
       >
         {trigger}
       </button>
-      {open && (
-        <div
-          role="dialog"
-          aria-label={label}
-          className="absolute right-0 top-full z-40 mt-2 w-72 animate-pop max-sm:fixed max-sm:inset-x-4 max-sm:top-16 max-sm:w-auto rounded-3xl border-2 border-ink-100 bg-surface-raised p-5 shadow-xl"
-        >
-          {children}
-        </div>
-      )}
+      {open &&
+        pos &&
+        createPortal(
+          <div
+            ref={card}
+            role="dialog"
+            aria-label={label}
+            className="fixed z-50 animate-pop rounded-3xl border-2 border-ink-100 bg-surface-raised p-5 shadow-xl"
+            style={{ top: pos.top, left: pos.left, width: pos.width }}
+          >
+            {children}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
