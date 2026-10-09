@@ -22,7 +22,7 @@ export default function AboutPage() {
       <Section id="about" title="About">
         Habla is a Duolingo-style language course built as a full-stack demo: a Next.js app talking to a
         FastAPI backend that owns every rule: checking answers, hearts, XP, streaks and which skills are
-        unlocked. Pip, our sprout mascot, keeps you company along the way.
+        unlocked. Pico, our scarlet macaw mascot (pico means “beak”), keeps you company along the way.
       </Section>
 
       <Section id="efficacy" title="Efficacy">

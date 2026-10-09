@@ -56,9 +56,9 @@ export function SkillNode({ skill, theme, level, offset, isCurrent, open, onTogg
   return (
     <div ref={ref} className="relative flex flex-col items-center" style={{ transform: `translateX(${rem(offset)})` }}>
       {isCurrent && (
-        // Pip keeps you company next to your current lesson, on the side with more room.
+        // Pico keeps you company next to your current lesson, on the side with more room.
         <div className={clsx("absolute top-1/2 hidden -translate-y-1/2 sm:block", offset >= 0 ? "right-full mr-10" : "left-full ml-10")}>
-          <Mascot size={104} interactive />
+          <Mascot size={104} interactive facing={offset >= 0 ? "right" : "left"} />
         </div>
       )}
       {isCurrent && !open && (
