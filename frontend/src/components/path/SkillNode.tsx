@@ -1,20 +1,21 @@
 "use client";
 
 import clsx from "clsx";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 import { ButtonLink } from "@/components/ui/Button";
-import { CrownBadge } from "@/components/ui/Crown";
 import { ProgressRing } from "@/components/ui/Progress";
 import type { SkillNode as Skill } from "@/lib/types";
 import { rem } from "@/lib/units";
 import { Mascot } from "@/components/ui/Mascot";
 
-import { themeFor } from "./theme";
+import { GOLD_CANDY, LOCKED_CANDY, themeFor } from "./theme";
 
 interface Props {
   skill: Skill;
   theme: string;
+  /** 1-based position along the whole course, shown on the level plaque. */
+  level: number;
   offset: number;
   isCurrent: boolean;
   open: boolean;
@@ -28,11 +29,24 @@ const STATUS_LABEL: Record<Skill["status"], string> = {
   completed: "Completed",
 };
 
-export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: Props) {
+/** Crown level (0..cap) → 0-3 stars, Candy Crush style. */
+export function starsFor(mastery: number, cap: number): number {
+  if (mastery <= 0) return 0;
+  if (mastery >= cap) return 3;
+  return mastery >= Math.ceil(cap / 2) ? 2 : 1;
+}
+
+/**
+ * One level on the path: a glossy "candy" button (colour = unit theme, gold once
+ * completed, grey while locked), stars for its crown level and a numbered plaque.
+ * The progress ring is only drawn around the level you're currently on.
+ */
+export function SkillNode({ skill, theme, level, offset, isCurrent, open, onToggle }: Props) {
   const t = themeFor(theme);
   const locked = skill.status === "locked";
   const completed = skill.status === "completed";
   const ratio = completed ? skill.mastery / skill.mastery_cap : skill.lessons_completed / skill.lessons_total;
+  const candy = locked ? LOCKED_CANDY : completed ? GOLD_CANDY : t.candy;
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,37 +67,85 @@ export function SkillNode({ skill, theme, offset, isCurrent, open, onToggle }: P
         </span>
       )}
       <ProgressRing
-        value={locked ? 0 : ratio}
+        value={isCurrent ? ratio : 0}
         size={104}
         stroke={8}
-        color={completed ? "#FFC800" : t.ring}
+        color={t.ring}
+        track={isCurrent ? undefined : "transparent"}
         className={clsx(isCurrent && "rounded-full animate-pulse-ring")}
       >
         <button
           type="button"
           onClick={onToggle}
           aria-expanded={open}
-          aria-label={`${skill.title}: ${STATUS_LABEL[skill.status]}, ${skill.lessons_completed} of ${skill.lessons_total} lessons`}
+          aria-label={`Level ${level}, ${skill.title}: ${STATUS_LABEL[skill.status]}, ${skill.lessons_completed} of ${skill.lessons_total} lessons, crown level ${skill.mastery} of ${skill.mastery_cap}`}
+          data-trail-point
+          data-trail-done={!locked || undefined}
           className={clsx(
-            "flex h-[4.75rem] w-[4.75rem] items-center justify-center rounded-full border-b-[6px] text-4xl transition-transform duration-75",
-            "active:translate-y-[3px] active:border-b-[3px]",
-            locked && "border-ink-300 bg-ink-200 grayscale",
-            completed && "border-sun-600 bg-sun-500",
-            !locked && !completed && t.node,
+            "candy flex h-[5rem] w-[5rem] items-center justify-center rounded-full text-4xl",
+            locked && "candy-locked",
+            isCurrent && !open && "candy-current",
           )}
+          style={{ "--c-light": candy.light, "--c-base": candy.base, "--c-dark": candy.dark, "--c-edge": candy.edge } as CSSProperties}
         >
-          <span aria-hidden className={clsx(locked && "opacity-40")}>{skill.icon}</span>
+          <span aria-hidden className={clsx("relative drop-shadow-[0_2px_0_rgb(0_0_0/0.15)]", locked && "opacity-40 grayscale")}>{skill.icon}</span>
           {locked && (
-            <span aria-hidden className="absolute bottom-3 right-3 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-ink-300 text-xs">
+            <span aria-hidden className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-surface bg-ink-300 text-xs">
               🔒
             </span>
           )}
         </button>
-        {!locked && <CrownBadge level={skill.mastery} max={skill.mastery_cap} className="absolute -bottom-1 -right-1" />}
+        {completed && <LevelStars count={starsFor(skill.mastery, skill.mastery_cap)} />}
       </ProgressRing>
-      <p className={clsx("mt-1 text-sm font-extrabold", locked ? "text-ink-500" : "text-ink-700")}>{skill.title}</p>
+      <p
+        className={clsx(
+          "mt-2 flex items-center gap-1.5 rounded-full border-2 border-ink-200 bg-surface py-0.5 pl-0.5 pr-3 text-sm font-extrabold shadow-[0_2px_0_rgb(var(--ink-200))]",
+          locked ? "text-ink-500" : "text-ink-700",
+        )}
+      >
+        <span
+          aria-hidden
+          className="flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-xs font-black text-white"
+          style={{ background: locked ? "rgb(var(--ink-300))" : candy.base }}
+        >
+          {level}
+        </span>
+        {skill.title}
+      </p>
       {open && <SkillPopover skill={skill} theme={theme} />}
     </div>
+  );
+}
+
+/** Three stars in an arc over the top of a finished level (earned ones gold). */
+function LevelStars({ count }: { count: number }) {
+  // left, middle, right: the middle star sits higher and is a bit bigger, like Candy Crush
+  const slots = [
+    { x: "-2.3rem", y: "0.55rem", size: "1.45rem", rot: "-18deg" },
+    { x: "0rem", y: "0rem", size: "1.8rem", rot: "0deg" },
+    { x: "2.3rem", y: "0.55rem", size: "1.45rem", rot: "18deg" },
+  ];
+  return (
+    <span aria-hidden className="pointer-events-none absolute -top-1 left-1/2 h-0 w-0">
+      {slots.map((s, i) => (
+        <span
+          key={i}
+          className="absolute"
+          style={{ left: s.x, top: s.y, width: s.size, height: s.size, translate: "-50% -50%", rotate: s.rot }}
+        >
+          <svg viewBox="0 0 24 24" className="level-star h-full w-full" style={{ animationDelay: `${i * 0.12}s` }}>
+            <path
+              d="M12 2.2l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 16.8 6.1 20l1.3-6.5L2.5 9l6.6-.8z"
+              fill={i < count ? "#FFC800" : "rgb(var(--ink-200))"}
+              stroke={i < count ? "#E09C00" : "rgb(var(--ink-300))"}
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+            {i < count && <path d="M9.2 8.6l1.6-3.1" stroke="#FFF6C4" strokeWidth="1.6" strokeLinecap="round" />}
+          </svg>
+        </span>
+      ))}
+    </span>
   );
 }
 

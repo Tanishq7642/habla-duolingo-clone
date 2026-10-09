@@ -4,7 +4,6 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { Mascot } from "@/components/ui/Mascot";
 
 import { LeaderboardIcon, LearnIcon, MoreIcon, ProfileIcon, QuestsIcon, ShopIcon } from "./NavIcons";
 
@@ -28,7 +27,6 @@ function useIsActive() {
 export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2 rounded-xl px-2" aria-label="Habla home">
-      <Mascot size={40} />
       {/* Logotype: brand colour on purpose (WCAG exempts logos). */}
       <span className="text-[2.1rem] font-black tracking-tight text-leaf-500">habla</span>
     </Link>

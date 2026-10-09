@@ -15,6 +15,7 @@ import { GuidebookIcon } from "./GuidebookIcon";
 import { JumpToCurrent } from "./JumpToCurrent";
 import { GuidebookModal } from "./GuidebookModal";
 import { SkillNode } from "./SkillNode";
+import { TrailRoad } from "./TrailRoad";
 import { TRAIL_OFFSETS, themeFor } from "./theme";
 
 /** The first skill the learner can act on (in progress, else first available). */
@@ -51,37 +52,60 @@ export function LearningPath() {
   if (isError) return <ErrorState error={error} onRetry={() => refetch()} retrying={isRefetching} />;
 
   const current = currentSkillId(data);
-  let index = 0; // trail offset continues across units
+  let index = 0; // level numbers and trail offsets continue across units
   return (
     <div className="flex flex-col gap-10 pb-10">
-      {data.units.map((unit) => (
-        <section key={unit.id} id={`unit-section-${unit.id}`} aria-labelledby={`unit-${unit.id}`} className="scroll-mt-16">
-          <UnitBanner unit={unit} />
-          <ol className="relative mt-16 flex flex-col items-center gap-16">
-            {unit.skills.map((skill) => {
-              const offset = TRAIL_OFFSETS[index++ % TRAIL_OFFSETS.length];
-              return (
-                <li key={skill.id} id={`skill-${skill.id}`} data-skill-node className={clsx("relative", openSkill === skill.id && "z-20")}>
-                  <SkillNode
-                    skill={skill}
-                    theme={unit.theme}
-                    offset={offset}
-                    isCurrent={skill.id === current}
-                    open={openSkill === skill.id}
-                    onToggle={() => setOpenSkill((s) => (s === skill.id ? null : skill.id))}
-                  />
-                </li>
-              );
-            })}
-          </ol>
-        </section>
-      ))}
+      {data.units.map((unit) => {
+        const first = index;
+        index += unit.skills.length;
+        return (
+          <UnitSection
+            key={unit.id}
+            unit={unit}
+            firstIndex={first}
+            current={current}
+            openSkill={openSkill}
+            onToggle={(id) => setOpenSkill((s) => (s === id ? null : id))}
+          />
+        );
+      })}
       <div className="flex flex-col items-center gap-2 pt-4 text-center">
         <Mascot mood="think" size={90} interactive />
         <p className="font-extrabold text-ink-500">More units are on the way!</p>
       </div>
       {current !== null && <JumpToCurrent targetId={`skill-${current}`} />}
     </div>
+  );
+}
+
+function UnitSection({ unit, firstIndex, current, openSkill, onToggle }: {
+  unit: UnitNode;
+  firstIndex: number;
+  current: number | null;
+  openSkill: number | null;
+  onToggle: (skillId: number) => void;
+}) {
+  const version = unit.skills.map((s) => s.status).join(",");
+  return (
+    <section id={`unit-section-${unit.id}`} aria-labelledby={`unit-${unit.id}`} className="scroll-mt-16">
+      <UnitBanner unit={unit} />
+      <ol className="relative mt-16 flex flex-col items-center gap-16">
+        <TrailRoad candy={themeFor(unit.theme).candy} version={version} />
+        {unit.skills.map((skill, i) => (
+          <li key={skill.id} id={`skill-${skill.id}`} data-skill-node className={clsx("relative", openSkill === skill.id && "z-20")}>
+            <SkillNode
+              skill={skill}
+              theme={unit.theme}
+              level={firstIndex + i + 1}
+              offset={TRAIL_OFFSETS[(firstIndex + i) % TRAIL_OFFSETS.length]}
+              isCurrent={skill.id === current}
+              open={openSkill === skill.id}
+              onToggle={() => onToggle(skill.id)}
+            />
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 

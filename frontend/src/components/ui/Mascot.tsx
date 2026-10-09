@@ -23,7 +23,7 @@ const BODY = "M60 30 C90 30 104 54 104 80 C104 104 86 118 60 118 C34 118 16 104 
 /**
  * "Pip" – Habla's own mascot, drawn in Duolingo's rounded style with gradient
  * shading so it reads as 3D. Alive at all times via CSS (breathing, blinking,
- * leaf sway, waving; `.pip-*` in globals.css). Interactive Pips turn their head
+ * leaf sway, waving, a little bounce-and-hop dance; `.pip-*` in globals.css). Interactive Pips turn their head
  * towards the pointer: the face layer shifts most, the leaves lag and the body
  * leans slightly (parallax = a 3D head turn), and a click makes them hop.
  * Original artwork; no Duolingo assets.
@@ -40,6 +40,7 @@ export function Mascot({ mood = "happy", size = 96, className, interactive }: Pr
   const blinkDelay = `${(seed % 37) / 10}s`;
   const waveDelay = `${(seed % 23) / 10 + 2}s`;
   const lookDelay = `${(seed % 41) / 10}s`;
+  const bounceDelay = `${(seed % 29) / 10}s`;
 
   // Pointer → CSS variables --lx/--ly in [-1, 1] (no React re-renders).
   useEffect(() => {
@@ -79,7 +80,7 @@ export function Mascot({ mood = "happy", size = 96, className, interactive }: Pr
     <svg
       ref={svgRef}
       viewBox="0 0 120 130"
-      style={{ width: rem(size), height: rem(size * (130 / 120)) }}
+      style={{ width: rem(size), height: rem(size * (130 / 120)), ["--pip-delay" as string]: bounceDelay }}
       role="img"
       aria-label={label}
       onClick={hop}
