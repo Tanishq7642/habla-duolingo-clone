@@ -1,4 +1,4 @@
-# Habla 🌱 — a gamified language-learning vertical slice
+# Habla 🦜 — a gamified language-learning vertical slice
 
 Habla is a Duolingo-inspired Spanish course built as a **production-style vertical slice**: a
 learning path driven by real backend state, a reusable lesson engine, and server-authoritative
@@ -6,7 +6,7 @@ gamification (hearts, XP, streaks, daily goals, mastery, achievements, leaderboa
 
 **Live demo:** https://habla-web-one.vercel.app (API: https://habla-api-cyan.vercel.app/docs)
 
-Everything visual is original: the mascot **Pico** (a scarlet macaw) is hand-written SVG animated with CSS (breathing, blinking, waving; its eyes follow your pointer), sounds are synthesised
+Everything visual is original: the mascot **Pico** (a scarlet macaw) is hand-written SVG animated with CSS (rigged like a game character: head tilts, wing flaps, blinking and hops; its head follows your pointer), sounds are synthesised
 with Web Audio, and there are no third-party image or audio assets.
 
 > * Design notes (ER model, state machine, API contract, gamification flow): [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
